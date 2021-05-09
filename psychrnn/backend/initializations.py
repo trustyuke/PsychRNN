@@ -267,7 +267,8 @@ class WeightInitializer(object):
         dale_ratio = self.get_dale_ratio()
         if dale_ratio is not None:
             dale_vec = np.ones(self.N_rec)
-            dale_vec[int(dale_ratio * self.N_rec):] = dale_ratio/(1-dale_ratio)
+            dale_vec[np.diag(self.initializations['Dale_rec']) == -1] = dale_ratio / (1-dale_ratio)
+            # dale_vec[int(dale_ratio * self.N_rec):] = dale_ratio/(1-dale_ratio)
             dale_rec = np.diag(dale_vec) / np.linalg.norm(np.matmul(self.initializations['rec_connectivity'], np.diag(dale_vec)), axis=1)[:,np.newaxis]
             self.initializations['W_rec'] = np.matmul(self.initializations['W_rec'], dale_rec)
         return
