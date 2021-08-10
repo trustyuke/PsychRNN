@@ -79,6 +79,7 @@ class RNN(ABC):
         try:
             self.name = params['name']
         except KeyError:
+
             print("You must pass a  'name' to RNN")
             raise
 
