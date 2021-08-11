@@ -37,6 +37,7 @@ def rt_mask_mse_07(predictions, y, output_mask):
     
     # find decision period
     output1 = tf.equal(y, 1)
+    # define whether decision has been made: 1: yes; 0: not yet
     decision_period_vec = tf.expand_dims(tf.reduce_any(output1, axis=2), axis=2)
 
     # find predictions greater than threshold

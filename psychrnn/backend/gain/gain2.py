@@ -29,6 +29,7 @@ class Basic2(Basic):
             "output_transfer_function", tf.nn.relu
         )
         self.decision_threshold = params.get("decision_threshold", np.inf)
+        self.gain_bound = params.get("gain_bound")
 
     def recurrent_timestep(self, rnn_in, state):
         """Recurrent time step.
@@ -109,7 +110,8 @@ class Basic2(Basic):
         rnn_inputs_edit = []
 
         #################################### Tian added a gain term
-        gain = tf.random.uniform(tf.shape(input=state), minval=0, maxval=1, dtype=tf.dtypes.float32)
+        gain = tf.random.uniform(tf.shape(input=state), minval=self.gain_bound[0], maxval=self.gain_bound[1], dtype=tf.dtypes.float32)
+        ##################################################
 
         for rnn_input in rnn_inputs:
             this_input = tf.where(threshold_mask, threshold_input_mask, rnn_input)
