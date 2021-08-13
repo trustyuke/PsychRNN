@@ -66,7 +66,7 @@ class Checkerboard2AFC(Task):
         ##################################################
     ):
 
-        # super().__init__(4, 2, dt, tau, T, N_batch)
+        super().__init__(4, 2, dt, tau, T, N_batch)
         self.coherence = coherence
         self.side = side
         self.noise = noise
