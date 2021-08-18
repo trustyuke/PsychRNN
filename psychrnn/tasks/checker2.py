@@ -121,8 +121,8 @@ class Checkerboard2AFC(Task):
         params["checker_onset"] = np.random.randint(self.checker_onset[0], self.checker_onset[1])
 
         ################################################## Tian added this
-        params["g0_bound"] = g0_bound
-        params["gSplop_bound"] = gSlope_bound
+        params["g0_bound"] = self.g0_bound
+        params["gSlope_bound"] = self.gSlope_bound
         ##################################################
         return params
 
@@ -194,7 +194,7 @@ class Checkerboard2AFC(Task):
         if t > target_onset and t <= target_onset + checker_onset:
             g_t = g0
         if t > target_onset + checker_onset:
-            g_t = g_0 + gSlope*t 
+            g_t = g0 + gSlope*(t - checker_onset - target_onset) 
         ##################################################
 
         # ----------------------------------
