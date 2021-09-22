@@ -48,7 +48,11 @@ class Checkerboard2AFC(Task):
         N_batch,
         coherence=[-0.9, 0.9],
         side=0.5,
-        noise=0.25,
+
+        #############################################
+        ## Tian changed this, initially, noise = 0.25 
+        #############################################
+        noise=1,
         target_onset=[250, 500],
         checker_onset=[500, 1000],
         accumulation_mask=300,
