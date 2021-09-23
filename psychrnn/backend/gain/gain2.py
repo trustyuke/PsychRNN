@@ -1,3 +1,7 @@
+# Tian edited this: add a random gain to the relu function
+# gain*state = r
+# y = sigmoid(Wr + b)
+
 from __future__ import division
 
 from psychrnn.backend.rnn import RNN
