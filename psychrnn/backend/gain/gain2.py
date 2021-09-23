@@ -113,7 +113,7 @@ class Basic2(Basic):
         rnn_states = []
         rnn_inputs_edit = []
 
-        #################################### Tian added a gain term
+        #################################### Tian added a gain term (gain: N_batch*N_rec)
         gain = tf.random.uniform(tf.shape(input=state), minval=self.gain_bound[0], maxval=self.gain_bound[1], dtype=tf.dtypes.float32)
         ##################################################
 
@@ -122,10 +122,10 @@ class Basic2(Basic):
 
             state = self.recurrent_timestep(this_input, state)
 
-            ########################################################
-            ## Tian edited this: add a random gain to the relu function
-
+            ######################################################## Tian edited this: add a random gain to the relu function
             activation = tf.multiply(self.transfer_function(state), gain)
+			########################################################
+
             output = self.output_timestep(activation)
             
             rnn_outputs.append(output)

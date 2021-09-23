@@ -191,7 +191,7 @@ class Checkerboard2AFC(Task):
         # ----------------------------------
 
         g_t = np.zeros(1)
-        if t > target_onset and t <= target_onset + checker_onset:
+        if t <= target_onset + checker_onset:
             g_t = g0
         if t > target_onset + checker_onset:
             g_t = g0 + gSlope*(t - checker_onset - target_onset) 

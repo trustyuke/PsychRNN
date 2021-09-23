@@ -1,6 +1,8 @@
+# Tian added this: multiply the state with a gain term g = mt + g0
+
 from __future__ import division
 
-from psychrnn.backend.rnn import RNN
+from psychrnn.backend.rnnGain import RNN
 from psychrnn.backend.models.basic import Basic
 from psychrnn.backend.regularizations import Regularizer
 from psychrnn.backend.loss_functions import LossFunction
@@ -107,11 +109,58 @@ class Gain3(Basic):
         rnn_outputs = []
         rnn_states = []
         rnn_inputs_edit = []
-        for rnn_input in rnn_inputs:
+        # for rnn_input in rnn_inputs:
+        #     this_input = tf.where(threshold_mask, threshold_input_mask, rnn_input)
+
+        #     state = self.recurrent_timestep(this_input, state)
+        #     activation = self.transfer_function(state)
+        #     output = self.output_timestep(activation)
+            
+        #     rnn_outputs.append(output)
+        #     rnn_states.append(activation)
+        #     rnn_inputs_edit.append(this_input)
+
+        #     check_threshold = tf.greater(output, self.decision_threshold)
+        #     threshold_trial_mask_vector = tf.expand_dims(
+        #         tf.reduce_any(check_threshold, axis=1), axis=1
+        #     )
+        #     threshold_trial_mask = threshold_trial_mask_vector
+        #     for i in range(self.N_in - 1):
+        #         threshold_trial_mask = tf.concat(
+        #             (threshold_trial_mask, threshold_trial_mask_vector), axis=1
+        #         )
+        #     threshold_mask = tf.where(
+        #         threshold_mask, threshold_mask, threshold_trial_mask
+        #     )
+
+        # return (
+        #     tf.transpose(a=rnn_outputs, perm=[1, 0, 2]),
+        #     tf.transpose(a=rnn_states, perm=[1, 0, 2]),
+        #     tf.transpose(a=rnn_inputs_edit, perm=[1, 0, 2]),
+        # )
+
+
+        ####################################################################### Tian edited this
+        rnn_gains = tf.unstack(self.g, axis=1)
+
+
+        for i in len(rnn_inputs):
+            rnn_input = rnn_inputs[i]
+            rnn_gain = rnn_gains[i]
             this_input = tf.where(threshold_mask, threshold_input_mask, rnn_input)
+            this_gain = tf.where(threshold_mask, threshold_input_mask, rnn_gain)
 
             state = self.recurrent_timestep(this_input, state)
-            activation = self.transfer_function(state)
+            # make gain N_batch * N_rec ()
+            gainRep = tf.tile(this_gain, [1, N_rec])
+
+            # two choices to implement the gain: 
+            # 1). add gainRep to state: 
+            # activation = self.transfer_function(state + gainRep)
+
+            # 2). multiply gain to firing rate
+            activation = tf.multiply(self.transfer_function(state), gainRep)
+
             output = self.output_timestep(activation)
             
             rnn_outputs.append(output)
@@ -136,6 +185,8 @@ class Gain3(Basic):
             tf.transpose(a=rnn_states, perm=[1, 0, 2]),
             tf.transpose(a=rnn_inputs_edit, perm=[1, 0, 2]),
         )
+        #######################################################################
+
 
     def build(self):
         """Build the TensorFlow network and start a TensorFlow session."""
@@ -192,9 +243,16 @@ class Gain3(Basic):
         # --------------------------------------------------
         # Run the forward pass on trial_batch
         # --------------------------------------------------
-        outputs, states, inputs = self.sess.run(
-            [self.predictions, self.states, self.inputs],
-            feed_dict={self.x: trial_batch},
-        )
+        
+        # outputs, states, inputs = self.sess.run(
+        #     [self.predictions, self.states, self.inputs],
+        #     feed_dict={self.x: trial_batch},
+        # )
+
+
+        ######################################################## Tian edited this
+        outputs, states = self.sess.run([self.predictions, self.states],
+                                        feed_dict={self.x: x, self.g: g})
+        ########################################################
 
         return outputs, states, inputs
