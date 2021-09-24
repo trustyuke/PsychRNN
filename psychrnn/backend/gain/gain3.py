@@ -3,7 +3,7 @@
 from __future__ import division
 
 from psychrnn.backend.rnnGain import RNN
-from psychrnn.backend.models.basic import Basic
+# from psychrnn.backend.models.basic import Basic
 from psychrnn.backend.regularizations import Regularizer
 from psychrnn.backend.loss_functions import LossFunction
 import tensorflow as tf
@@ -12,7 +12,7 @@ import numpy as np
 tf.compat.v1.disable_eager_execution()
 
 
-class Gain3(Basic):
+class Gain3(RNN):
     """The basic continuous time recurrent neural network model.
 
     Slightly edited version of the Basic RNN of :class:`psychrnn.backend.models.basic.Basic`
@@ -26,11 +26,16 @@ class Gain3(Basic):
 
     def __init__(self, params):
 
-        super(Basic, self).__init__(params)
+        # super(Basic, self).__init__(params)
+        
+
+        super(RNN, self).__init__(params)
         self.output_transfer_function = params.get(
             "output_transfer_function", tf.nn.relu
         )
         self.decision_threshold = params.get("decision_threshold", np.inf)
+
+
 
     def recurrent_timestep(self, rnn_in, state):
         """Recurrent time step.
@@ -144,15 +149,17 @@ class Gain3(Basic):
         rnn_gains = tf.unstack(self.g, axis=1)
 
 
-        for i in len(rnn_inputs):
+        for i in range(len(rnn_inputs)):
             rnn_input = rnn_inputs[i]
             rnn_gain = rnn_gains[i]
             this_input = tf.where(threshold_mask, threshold_input_mask, rnn_input)
-            this_gain = tf.where(threshold_mask, threshold_input_mask, rnn_gain)
+
+            # might need to apply a mask of gain later
+            this_gain = rnn_gain
 
             state = self.recurrent_timestep(this_input, state)
             # make gain N_batch * N_rec ()
-            gainRep = tf.tile(this_gain, [1, N_rec])
+            gainRep = tf.tile(this_gain, [1, self.N_rec])
 
             # two choices to implement the gain: 
             # 1). add gainRep to state: 
@@ -222,7 +229,38 @@ class Gain3(Basic):
 
         return
 
-    def test(self, trial_batch):
+    # def test(self, trial_batch):
+    #     """Test the network on a certain task input.
+
+    #     Arguments:
+    #         trial_batch ((*ndarray(dtype=float, shape =(*:attr:`N_batch`, :attr:`N_steps`, :attr:`N_out` *))*): Task stimulus to run the network on. Stimulus from :func:`psychrnn.tasks.task.Task.get_trial_batch`, or from next(:func:`psychrnn.tasks.task.Task.batch_generator` ).
+
+    #     Returns:
+    #         tuple:
+    #         * **outputs** (*ndarray(dtype=float, shape =(*:attr:`N_batch`, :attr:`N_steps`, :attr:`N_out` *))*) -- Output time series of the network for each trial in the batch.
+    #         * **states** (*ndarray(dtype=float, shape =(*:attr:`N_batch`, :attr:`N_steps`, :attr:`N_rec` *))*) -- Activity of recurrent units during each trial.
+    #     """
+    #     if not self.is_built:
+    #         self.build()
+
+    #     if not self.is_initialized:
+    #         self.sess.run(tf.compat.v1.global_variables_initializer())
+    #         self.is_initialized = True
+
+    #     # --------------------------------------------------
+    #     # Run the forward pass on trial_batch
+    #     # --------------------------------------------------
+
+    #     outputs, states, inputs = self.sess.run(
+    #         [self.predictions, self.states, self.inputs],
+    #         feed_dict={self.x: trial_batch},
+    #     )
+
+    #     return outputs, states, inputs
+
+
+
+    def test(self, x, g):
         """Test the network on a certain task input.
 
         Arguments:
@@ -243,7 +281,7 @@ class Gain3(Basic):
         # --------------------------------------------------
         # Run the forward pass on trial_batch
         # --------------------------------------------------
-        
+
         # outputs, states, inputs = self.sess.run(
         #     [self.predictions, self.states, self.inputs],
         #     feed_dict={self.x: trial_batch},
@@ -251,7 +289,7 @@ class Gain3(Basic):
 
 
         ######################################################## Tian edited this
-        outputs, states = self.sess.run([self.predictions, self.states],
+        outputs, states, inputs = self.sess.run([self.predictions, self.states, self.inputs],
                                         feed_dict={self.x: x, self.g: g})
         ########################################################
 

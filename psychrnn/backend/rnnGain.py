@@ -578,7 +578,7 @@ class RNN(ABC):
 
                 ######################################################## Tian edited this reg loss
                 reg_loss = self.sess.run(self.reg_loss,
-                                feed_dict={self.x: batch_x, self.y: batch_y, self.output_mask: output_mask})  
+                                feed_dict={self.x: batch_x, self.y: batch_y, self.output_mask: output_mask, self.g: batch_g})  
                                 
 
                 losses.append(reg_loss)
