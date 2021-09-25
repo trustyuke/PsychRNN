@@ -24,16 +24,16 @@ class Gain3(RNN):
 
     """
 
-    def __init__(self, params):
+    # def __init__(self, params):
 
-        # super(Basic, self).__init__(params)
+    #     # super(Basic, self).__init__(params)
         
 
-        super(RNN, self).__init__(params)
-        self.output_transfer_function = params.get(
-            "output_transfer_function", tf.nn.relu
-        )
-        self.decision_threshold = params.get("decision_threshold", np.inf)
+    #     super(RNN, self).__init__(params)
+    #     self.output_transfer_function = params.get(
+    #         "output_transfer_function", tf.nn.relu
+    #     )
+    #     self.decision_threshold = params.get("decision_threshold", np.inf)
 
 
 
@@ -147,6 +147,8 @@ class Gain3(RNN):
 
         ####################################################################### Tian edited this
         rnn_gains = tf.unstack(self.g, axis=1)
+        threshold_g_mask = tf.zeros((self.N_batch, 1))
+        threshold_mask2 = tf.zeros((self.N_batch, 1), dtype=tf.bool)
 
 
         for i in range(len(rnn_inputs)):
@@ -155,7 +157,7 @@ class Gain3(RNN):
             this_input = tf.where(threshold_mask, threshold_input_mask, rnn_input)
 
             # might need to apply a mask of gain later
-            this_gain = rnn_gain
+            this_gain = tf.where(threshold_mask2, threshold_g_mask, rnn_gain)
 
             state = self.recurrent_timestep(this_input, state)
             # make gain N_batch * N_rec ()
@@ -179,10 +181,14 @@ class Gain3(RNN):
                 tf.reduce_any(check_threshold, axis=1), axis=1
             )
             threshold_trial_mask = threshold_trial_mask_vector
+
+            threshold_mask2 = tf.where(threshold_mask2, threshold_mask2, threshold_trial_mask)    
+
             for i in range(self.N_in - 1):
                 threshold_trial_mask = tf.concat(
                     (threshold_trial_mask, threshold_trial_mask_vector), axis=1
                 )
+                
             threshold_mask = tf.where(
                 threshold_mask, threshold_mask, threshold_trial_mask
             )

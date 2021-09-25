@@ -52,7 +52,7 @@ class Checkerboard2AFC(Task):
         #############################################
         ## Tian changed this, initially, noise = 0.25 
         #############################################
-        noise=1,
+        noise=0.25,
         target_onset=[250, 500],
         checker_onset=[500, 1000],
         accumulation_mask=300,
