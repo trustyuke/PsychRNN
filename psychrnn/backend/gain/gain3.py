@@ -154,9 +154,11 @@ class Gain3(RNN):
         for i in range(len(rnn_inputs)):
             rnn_input = rnn_inputs[i]
             rnn_gain = rnn_gains[i]
+            # choose whether the input should be zero (choose from threshold input mask when threshold mask equals 1 ) 
+            # or actually input (threshold mask equals 0 ) 
             this_input = tf.where(threshold_mask, threshold_input_mask, rnn_input)
 
-            # might need to apply a mask of gain later
+            # same rule for gain as input
             this_gain = tf.where(threshold_mask2, threshold_g_mask, rnn_gain)
 
             state = self.recurrent_timestep(this_input, state)
@@ -164,11 +166,14 @@ class Gain3(RNN):
             gainRep = tf.tile(this_gain, [1, self.N_rec])
 
             # two choices to implement the gain: 
+
             # 1). add gainRep to state: 
-            # activation = self.transfer_function(state + gainRep)
+            activation = self.transfer_function(state + gainRep)
 
             # 2). multiply gain to firing rate
-            activation = tf.multiply(self.transfer_function(state), gainRep)
+            # activation = tf.multiply(self.transfer_function(state), gainRep)
+            # activation = self.transfer_function(tf.multiply(state, gainRep))
+
 
             output = self.output_timestep(activation)
             
@@ -176,19 +181,23 @@ class Gain3(RNN):
             rnn_states.append(activation)
             rnn_inputs_edit.append(this_input)
 
+            # check_threshold: N_batch * 2 matrix
             check_threshold = tf.greater(output, self.decision_threshold)
+            # reduce 2nd dimension of check_threshold: check whether one of the choice reached threshold
             threshold_trial_mask_vector = tf.expand_dims(
                 tf.reduce_any(check_threshold, axis=1), axis=1
             )
+            # store the vector to threshold_trail_mask 
             threshold_trial_mask = threshold_trial_mask_vector
+            # update threshold_mask2 for gain: for current time step, if threshold is reached, threshold_mask2 value update to 1
+            threshold_mask2 = tf.where(threshold_mask2, threshold_mask2, threshold_trial_mask)  
 
-            threshold_mask2 = tf.where(threshold_mask2, threshold_mask2, threshold_trial_mask)    
-
+            # repeat the threshold_trial_mask for 3 times; now there are 4 columnes, they are all the same
             for i in range(self.N_in - 1):
                 threshold_trial_mask = tf.concat(
                     (threshold_trial_mask, threshold_trial_mask_vector), axis=1
                 )
-                
+            # update threshold_mask for input: for current time step, if threshold is reached, threshold_mask value update to 1
             threshold_mask = tf.where(
                 threshold_mask, threshold_mask, threshold_trial_mask
             )
