@@ -1,3 +1,5 @@
+# Gary's code: a RNN to perform checkerboard task
+
 from __future__ import division
 
 from psychrnn.backend.rnn import RNN

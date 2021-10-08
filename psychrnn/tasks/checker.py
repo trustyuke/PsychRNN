@@ -49,9 +49,6 @@ class Checkerboard2AFC(Task):
         coherence=[-0.9, 0.9],
         side=0.5,
 
-        #############################################
-        ## Tian changed this, initially, noise = 0.25 
-        #############################################
         noise=0.25,
         target_onset=[250, 500],
         checker_onset=[500, 1000],
