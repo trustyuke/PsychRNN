@@ -76,8 +76,6 @@ for ii  = 1 : floor(length(coh)/2)
 end
 
 %% based on coherence: not combining same coh trials
-
-
 cc = jet(19);
 figure();
 coh = unique(checker.coherence_bin);
@@ -88,46 +86,74 @@ for ii  = 1 : length(coh)
     rightSelect = selectedTrials & right;
     leftTrajAve = sum(orthF(:,:,leftSelect), 3);
     rightTrajAve = sum(orthF(:,:,rightSelect), 3);
-    
+      
+    % left and right average RT of each RT bin    
     leftAveRT = round(mean(RTR(leftSelect))./10) + 50;
     rightAveRT = round(mean(RTR(rightSelect))./10) + 50;
-%     plot3(leftTrajAve(1,:), leftTrajAve(2,:),leftTrajAve(3,:), 'color', [0,1,0].*ii.*0.05, 'linestyle', '--');
-%     hold on
-%     plot3(rightTrajAve(1,:), rightTrajAve(2,:),rightTrajAve(3,:), 'color', [0,0,1].*ii.*0.05);
-%     
-    plot3(leftTrajAve(1,1:leftAveRT), leftTrajAve(2,1:leftAveRT),leftTrajAve(3,1:leftAveRT), 'color', cc(ii,:), 'linestyle', '--');
-    hold on
-    % mark the checkerboard onset
-    plot3(leftTrajAve(1,50), leftTrajAve(2,50),leftTrajAve(3,50), 'color', cc(ii,:), 'marker', '.', 'markersize', 10);
-
-    plot3(rightTrajAve(1,1:rightAveRT), rightTrajAve(2,1:rightAveRT),rightTrajAve(3,1:rightAveRT), 'color', cc(ii,:));
-    hold on
-    % mark the checkerboard onset
-    plot3(rightTrajAve(1,50), rightTrajAve(2,50),rightTrajAve(3,50), 'color', cc(ii,:), 'marker', '.', 'markersize', 10);
     
-%     pause()
+    % plot left trajs
+    plot3(leftTrajAve(1,1:leftAveRT), leftTrajAve(2,1:leftAveRT),leftTrajAve(3,1:leftAveRT), 'color', cc(ii,:), 'linestyle', '--', 'linewidth', 2);
+    hold on
+    % mark the checkerboard onset
+    plot3(leftTrajAve(1,50), leftTrajAve(2,50),leftTrajAve(3,50), 'color', cc(ii,:), 'marker', 'd', 'markerfacecolor',cc(ii,:),'markersize', 10);
+    % mark the RT (end time)
+    plot3(leftTrajAve(1,leftAveRT), leftTrajAve(2,leftAveRT),leftTrajAve(3,leftAveRT), 'color', 'k', 'marker', '.', 'markersize', 25);
+    
+    % plot right trajs
+    plot3(rightTrajAve(1,1:rightAveRT), rightTrajAve(2,1:rightAveRT),rightTrajAve(3,1:rightAveRT), 'color', cc(ii,:), 'linewidth', 2);
+    hold on
+    % mark the checkerboard onset
+    plot3(rightTrajAve(1,50), rightTrajAve(2,50),rightTrajAve(3,50), 'color', cc(ii,:), 'marker', 'd', 'markerfacecolor',cc(ii,:), 'markersize', 10);
+    % mark the RT (end time)
+    plot3(rightTrajAve(1,rightAveRT), rightTrajAve(2,rightAveRT),rightTrajAve(3,rightAveRT), 'color', 'k', 'marker', '.', 'markersize', 25);
+     
+     pause()
 end
 
 %% based on RT
 
-RT = checker.decision_time;
+% the trials definitely have more trials with fastere RT, so the long RT
+% trajs are messay
 
-rt = 0:300:3000;
+% total data: 500ms before checkerboard onset to 2000ms after checkerboard
+% onset. So max RT that can be plotted is 2000ms
+rt = 0:200:2000;
+cc = jet(length(rt));
 
 % blue to red as RT increases
 % left: --; right: -
 figure();
 for ii  = 1 : length(rt) - 1
-    selectedTrials = (rt(ii) < RT & RT < rt(ii + 1));
+    selectedTrials = (rt(ii) < RTR & RTR < rt(ii + 1));
 
     leftSelect = selectedTrials & left;
     rightSelect = selectedTrials & right;
     leftTrajAve = sum(orthF(:,:,leftSelect), 3);
     rightTrajAve = sum(orthF(:,:,rightSelect), 3);
 
-    plot3(leftTrajAve(1,:), leftTrajAve(2,:),leftTrajAve(3,:), 'color', [ii*0.1,0,1-ii*0.1], 'linestyle', '--');
+    % left and right average RT of each RT bin
+    leftAveRT = round(mean(RTR(leftSelect))./10) + 50;
+    rightAveRT = round(mean(RTR(rightSelect))./10) + 50;
+    
+    % plot left trajs
+    plot3(leftTrajAve(1,1:leftAveRT), leftTrajAve(2,1:leftAveRT),leftTrajAve(3,1:leftAveRT), 'color', cc(ii,:), 'linestyle', '--', 'linewidth', 2);
     hold on
-    plot3(rightTrajAve(1,:), rightTrajAve(2,:),rightTrajAve(3,:), 'color', [ii*0.1,0,1-ii*0.1]);
+    % mark the checkerboard onset
+    plot3(leftTrajAve(1,50), leftTrajAve(2,50),leftTrajAve(3,50), 'color', cc(ii,:), 'marker', 'd', 'markerfacecolor',cc(ii,:),'markersize', 10);
+    % mark the RT (end time)
+    plot3(leftTrajAve(1,leftAveRT), leftTrajAve(2,leftAveRT),leftTrajAve(3,leftAveRT), 'color', 'k', 'marker', '.', 'markersize', 25);
+    
+    % plot right trajs
+    plot3(rightTrajAve(1,1:rightAveRT), rightTrajAve(2,1:rightAveRT),rightTrajAve(3,1:rightAveRT), 'color', cc(ii,:), 'linewidth', 2);
+    hold on
+    % mark the checkerboard onset
+    plot3(rightTrajAve(1,50), rightTrajAve(2,50),rightTrajAve(3,50), 'color', cc(ii,:), 'marker', 'd', 'markerfacecolor',cc(ii,:), 'markersize', 10);
+    % mark the RT (end time)
+    plot3(rightTrajAve(1,rightAveRT), rightTrajAve(2,rightAveRT),rightTrajAve(3,rightAveRT), 'color', 'k', 'marker', '.', 'markersize', 25);
+    
     pause()
+    delete(gca)
 end
+
+%%
 
