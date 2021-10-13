@@ -1,11 +1,11 @@
 clear all; close all; clc
 % for linux work station 
-% temp = load("/home/tianwang/code/behaviorRNN/PsychRNNArchive/stateActivity/temp.mat").temp;
-% checker = readtable("/home/tianwang/code/behaviorRNN/PsychRNN/resultData/basic2InputNoise0.5.csv");
+temp = load("/home/tianwang/code/behaviorRNN/PsychRNNArchive/stateActivity/temp.mat").temp;
+checker = readtable("/home/tianwang/code/behaviorRNN/PsychRNN/resultData/basic2InputNoise0.5.csv");
 
 % for Tian's PC
-temp = load("D:\BU\ChandLab\PsychRNNArchive\stateActivity\temp.mat").temp;
-checker = readtable("D:/BU/chandLab/PsychRNN/resultData/basic2InputNoise0.5.csv");
+% temp = load("D:\BU\ChandLab\PsychRNNArchive\stateActivity\temp.mat").temp;
+% checker = readtable("D:/BU/chandLab/PsychRNN/resultData/basic2InputNoise0.5.csv");
 
 [a, b, c] = size(temp);
 

@@ -16,7 +16,6 @@ RT = checker.decision_time;
 targetOn = checker.target_onset;
 checkerOn = checker.checker_onset;
 
-% real RT, targetOn and checkerOn round to 10's digit
 RTR = round(RT, -1);
 targetOnR = round(targetOn,-1);
 checkerOnR = round(checkerOn + targetOn, -1);
@@ -48,11 +47,13 @@ end
 
 %% plot first trial all state activity
 plot(temp(:,:,1)')
-%% general average of left and right
+%%
+
 
 leftTrajAve = sum(orthF(:,:,left), 3);
 rightTrajAve = sum(orthF(:,:,right), 3);
 
+general average of left and right
 figure(); 
 plot3(leftTrajAve(1,:), leftTrajAve(2,:),leftTrajAve(3,:));
 hold on
@@ -113,7 +114,7 @@ for ii  = 1 : length(coh)
     % mark the RT (end time)
     plot3(rightTrajAve(1,rightAveRT), rightTrajAve(2,rightAveRT),rightTrajAve(3,rightAveRT), 'color', 'k', 'marker', '.', 'markersize', 25);
      
-%      pause()
+     pause()
 end
 
 %% based on RT
@@ -123,7 +124,7 @@ end
 
 % total data: 500ms before checkerboard onset to 2000ms after checkerboard
 % onset. So max RT that can be plotted is 2000ms
-rt = 0:100:1000;
+rt = 0:200:2000;
 cc = jet(length(rt));
 
 % blue to red as RT increases
@@ -158,7 +159,7 @@ for ii  = 1 : length(rt) - 1
     plot3(rightTrajAve(1,rightAveRT), rightTrajAve(2,rightAveRT),rightTrajAve(3,rightAveRT), 'color', 'k', 'marker', '.', 'markersize', 25);
     
     pause()
-%     delete(gca)
+    delete(gca)
 end
 
 %%
