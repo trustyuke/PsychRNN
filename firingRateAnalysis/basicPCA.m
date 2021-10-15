@@ -1,11 +1,15 @@
 clear all; close all; clc
 % for linux work station 
-temp = load("/home/tianwang/code/behaviorRNN/PsychRNNArchive/stateActivity/temp.mat").temp;
-checker = readtable("/home/tianwang/code/behaviorRNN/PsychRNN/resultData/basic2InputNoise0.5.csv");
+% temp = load("/home/tianwang/code/behaviorRNN/PsychRNNArchive/stateActivity/temp.mat").temp;
+% checker = readtable("/home/tianwang/code/behaviorRNN/PsychRNN/resultData/basic2InputNoise0.5.csv");
 
 % for Tian's PC
-% temp = load("D:\BU\ChandLab\PsychRNNArchive\stateActivity\temp.mat").temp;
-% checker = readtable("D:/BU/chandLab/PsychRNN/resultData/basic2InputNoise0.5.csv");
+temp = load("D:\BU\ChandLab\PsychRNNArchive\stateActivity\temp.mat").temp;
+checker = readtable("D:/BU/chandLab/PsychRNN/resultData/basic2InputNoise0.5.csv");
+
+% for checkerPmd
+% temp = load("D:\BU\ChandLab\PsychRNNArchive\stateActivity\state.mat").state;
+% checker = readtable("D:/BU/chandLab/PsychRNN/resultData/checkerPmdInputNoise0.25recNoise0.5.csv");
 
 [a, b, c] = size(temp);
 
@@ -85,6 +89,7 @@ end
 cc = jet(19);
 figure();
 coh = unique(checker.coherence_bin);
+% coh = [0.3, 0.4, 0.5];
 for ii  = 1 : length(coh)
     selectedTrials = checker.coherence_bin == coh(ii);
 
@@ -123,7 +128,7 @@ end
 
 % total data: 500ms before checkerboard onset to 2000ms after checkerboard
 % onset. So max RT that can be plotted is 2000ms
-rt = 0:100:1000;
+rt = 0:200:2000;
 cc = jet(length(rt));
 
 % blue to red as RT increases

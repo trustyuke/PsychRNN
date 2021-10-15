@@ -47,7 +47,7 @@ class Checkerboard2AFC(Task):
         tau,
         T,
         N_batch,
-        coherence=[-0.9, 0.9],
+        coherence=[0, 1],
         side=0.5,
 
         noise=0.25,
@@ -59,7 +59,6 @@ class Checkerboard2AFC(Task):
         # Tian changed this: change the input to be 3 entries
         super().__init__(2, 2, dt, tau, T, N_batch)
         self.coherence = coherence
-        self.side = side
         self.noise = noise
         self.target_onset = target_onset
         self.checker_onset = checker_onset
@@ -100,7 +99,6 @@ class Checkerboard2AFC(Task):
             if len(self.coherence) == 1
             else np.random.uniform(self.coherence[0], self.coherence[1])
         )
-        params["side"] = int(np.random.random() < self.side)
         params["noise"] = self.noise
         params["accumulation_mask"] = self.accumulation_mask
         params["target_onset"] = np.random.randint(self.target_onset[0], self.target_onset[1])
@@ -149,8 +147,11 @@ class Checkerboard2AFC(Task):
         checker_onset = params["checker_onset"]
         accumulation_mask = params["accumulation_mask"]
         coherence = params["coherence"]
-        green_side = params["side"]
-        correct_side = green_side if coherence > 0 else abs(green_side - 1)
+
+        if coherence > 0.5:
+            correct_side = 0 
+        else: 
+            correct_side = 1
 
         # ----------------------------------
         # Generate stimulus
@@ -161,24 +162,15 @@ class Checkerboard2AFC(Task):
 
         ######################################################################################## ERROR 
         x_t = np.zeros(self.N_in)
-        x_t[:] = (params["noise"] ** 2) * np.sqrt(self.dt) * np.random.randn(2)
+        # x_t[:] = (params["noise"] ** 2) * np.sqrt(self.dt) * np.random.randn(2)
 
-        if green_side and coherence <= 0:
-            left_evidence =  np.abs(coherence)
-            right_evidence = 1 - np.abs(coherence)
-        elif green_side and coherence >= 0:
-            left_evidence =  1 - coherence
-            right_evidence = coherence            
-        elif green_side == 0 and coherence <= 0:
-            left_evidence =  1 - np.abs(coherence)
-            right_evidence = np.abs(coherence)  
-        elif green_side == 0 and coherence >= 0:
-            left_evidence =  coherence
-            right_evidence = 1 - coherence                              
+                             
 
         if t > target_onset + checker_onset:
-            x_t[0] += left_evidence
-            x_t[1] += right_evidence
+            x_t[:] = (params["noise"] ** 2) * np.sqrt(self.dt) * np.random.randn(2)
+
+            x_t[0] += coherence  
+            x_t[1] += 1-coherence
 
         # ----------------------------------
         # Generate output and mask

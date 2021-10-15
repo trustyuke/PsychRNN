@@ -5,8 +5,13 @@ clear all; close all; clc
 % checker = readtable("/home/tianwang/code/behaviorRNN/PsychRNN/resultData/basic2InputNoise0.5.csv");
 
 % for Tian's PC
-temp = load("D:\BU\ChandLab\PsychRNNArchive\stateActivity\temp.mat").temp;
-checker = readtable("D:/BU/chandLab/PsychRNN/resultData/basic2InputNoise0.5.csv");
+% temp = load("D:\BU\ChandLab\PsychRNNArchive\stateActivity\temp.mat").temp;
+% checker = readtable("D:/BU/chandLab/PsychRNN/resultData/basic2InputNoise0.5.csv");
+
+% for checkerPmd
+temp = load("D:\BU\ChandLab\PsychRNNArchive\stateActivity\state.mat").state;
+checker = readtable("D:/BU/chandLab/PsychRNN/resultData/checkerPmdInputNoise0.25recNoise0.5.csv");
+
 
 [a, b, c] = size(temp);
 
@@ -53,37 +58,37 @@ for ii = 1 : size(train_x,2)
 end
 
 
-tic
-% shuffled r2 of choice 1    
-shuffled_r2 = zeros(100, size(trials1,2));
-
-for sIdx = 1 : 100
-
-    R = randperm(size(trials1,3));
-    train_x = trials1;
-    temp = RT(left);
-    train_yS = temp(R);
-    
-    for ii = 1 : size(train_x,2)
-
-        t1 = [squeeze(train_x(:,ii,:))', coh(left)];
-        md1 = fitrlinear(t1, train_yS, 'learner', 'leastsquares');
-
-        label = predict(md1, t1);
-        R = corrcoef(label, train_yS);
-        R2 = R(1,2).^2;
-        shuffled_r2(sIdx, ii) = R2;    
-    end 
-
-end
-    
-% calculate bound accuarcy
-bounds = zeros(2, size(trials1,2));
-percentile = 100/size(shuffled_r2,1);
-bounds(1,:) = prctile(shuffled_r2, percentile, 1);
-bounds(2,:) = prctile(shuffled_r2, 100 - percentile, 1);
-
-toc
+% tic
+% % shuffled r2 of choice 1    
+% shuffled_r2 = zeros(100, size(trials1,2));
+% 
+% for sIdx = 1 : 100
+% 
+%     R = randperm(size(trials1,3));
+%     train_x = trials1;
+%     temp = RT(left);
+%     train_yS = temp(R);
+%     
+%     for ii = 1 : size(train_x,2)
+% 
+%         t1 = [squeeze(train_x(:,ii,:))', coh(left)];
+%         md1 = fitrlinear(t1, train_yS, 'learner', 'leastsquares');
+% 
+%         label = predict(md1, t1);
+%         R = corrcoef(label, train_yS);
+%         R2 = R(1,2).^2;
+%         shuffled_r2(sIdx, ii) = R2;    
+%     end 
+% 
+% end
+%     
+% % calculate bound accuarcy
+% bounds = zeros(2, size(trials1,2));
+% percentile = 100/size(shuffled_r2,1);
+% bounds(1,:) = prctile(shuffled_r2, percentile, 1);
+% bounds(2,:) = prctile(shuffled_r2, 100 - percentile, 1);
+% 
+% toc
 
 %%
 
