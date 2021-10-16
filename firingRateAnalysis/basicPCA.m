@@ -1,11 +1,11 @@
 clear all; close all; clc
 % for linux work station 
-% temp = load("/home/tianwang/code/behaviorRNN/PsychRNNArchive/stateActivity/temp.mat").temp;
-% checker = readtable("/home/tianwang/code/behaviorRNN/PsychRNN/resultData/basic2InputNoise0.5.csv");
+temp = load("/home/tianwang/code/behaviorRNN/PsychRNNArchive/stateActivity/temp.mat").temp;
+checker = readtable("/home/tianwang/code/behaviorRNN/PsychRNN/resultData/basic2InputNoise0.5.csv");
 
 % for Tian's PC
-temp = load("D:\BU\ChandLab\PsychRNNArchive\stateActivity\temp.mat").temp;
-checker = readtable("D:/BU/chandLab/PsychRNN/resultData/basic2InputNoise0.5.csv");
+% temp = load("D:\BU\ChandLab\PsychRNNArchive\stateActivity\temp.mat").temp;
+% checker = readtable("D:/BU/chandLab/PsychRNN/resultData/basic2InputNoise0.5.csv");
 
 % for checkerPmd
 % temp = load("D:\BU\ChandLab\PsychRNNArchive\stateActivity\state.mat").state;
@@ -67,29 +67,11 @@ plot3(rightTrajAve(1,1), rightTrajAve(2,1),rightTrajAve(3,1), 'ro', 'markersize'
 
 legend('left', 'right')
 
-%% based on coherence: combined same coh trials
-
-figure();
-coh = unique(checker.coherence_bin);
-for ii  = 1 : floor(length(coh)/2)
-    selectedTrials = (checker.coherence_bin == coh(ii) | checker.coherence_bin == -coh(ii));
-
-    leftSelect = selectedTrials & left;
-    rightSelect = selectedTrials & right;
-    leftTrajAve = sum(orthF(:,:,leftSelect), 3);
-    rightTrajAve = sum(orthF(:,:,rightSelect), 3);
-
-    plot3(leftTrajAve(1,:), leftTrajAve(2,:),leftTrajAve(3,:), 'color', [0,1,0].*ii.*0.1, 'linestyle', '--');
-    hold on
-    plot3(rightTrajAve(1,:), rightTrajAve(2,:),rightTrajAve(3,:), 'color', [0,0,1].*ii.*0.1);
-    pause()
-end
 
 %% based on coherence: not combining same coh trials
 cc = jet(19);
 figure();
 coh = unique(checker.coherence_bin);
-% coh = [0.3, 0.4, 0.5];
 for ii  = 1 : length(coh)
     selectedTrials = checker.coherence_bin == coh(ii);
 
@@ -120,6 +102,42 @@ for ii  = 1 : length(coh)
      
 %      pause()
 end
+
+%% based on coherence: 2 input-RNN
+
+% cc = jet(19);
+% figure();
+% coh = unique(checker.coherence_bin);
+% for ii  = 1 : length(coh)
+%     selectedTrials = checker.coherence_bin == coh(ii);
+% 
+%     leftSelect = selectedTrials & left;
+%     rightSelect = selectedTrials & right;
+%     leftTrajAve = sum(orthF(:,:,leftSelect), 3);
+%     rightTrajAve = sum(orthF(:,:,rightSelect), 3);
+%       
+%     % left and right average RT of each RT bin    
+%     leftAveRT = round(mean(RTR(leftSelect))./10) + 50;
+%     rightAveRT = round(mean(RTR(rightSelect))./10) + 50;
+%     
+%     % plot left trajs
+%     plot3(leftTrajAve(1,1:leftAveRT), leftTrajAve(2,1:leftAveRT),leftTrajAve(3,1:leftAveRT), 'color', cc(ii,:), 'linestyle', '--', 'linewidth', 2);
+%     hold on
+%     % mark the checkerboard onset
+%     plot3(leftTrajAve(1,50), leftTrajAve(2,50),leftTrajAve(3,50), 'color', cc(ii,:), 'marker', 'd', 'markerfacecolor',cc(ii,:),'markersize', 10);
+%     % mark the RT (end time)
+%     plot3(leftTrajAve(1,leftAveRT), leftTrajAve(2,leftAveRT),leftTrajAve(3,leftAveRT), 'color', 'k', 'marker', '.', 'markersize', 25);
+%     
+%     % plot right trajs
+%     plot3(rightTrajAve(1,1:rightAveRT), rightTrajAve(2,1:rightAveRT),rightTrajAve(3,1:rightAveRT), 'color', cc(ii,:), 'linewidth', 2);
+%     hold on
+%     % mark the checkerboard onset
+%     plot3(rightTrajAve(1,50), rightTrajAve(2,50),rightTrajAve(3,50), 'color', cc(ii,:), 'marker', 'd', 'markerfacecolor',cc(ii,:), 'markersize', 10);
+%     % mark the RT (end time)
+%     plot3(rightTrajAve(1,rightAveRT), rightTrajAve(2,rightAveRT),rightTrajAve(3,rightAveRT), 'color', 'k', 'marker', '.', 'markersize', 25);
+%      
+% %      pause()
+% end
 
 %% based on RT
 

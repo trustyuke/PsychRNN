@@ -1,9 +1,5 @@
 clear all; close all; clc
 
-% data:
-% temp: checkerPmd recNoise = 0.5
-% temp2: checkerPmd recNoise = 0
-% gain: checkerPmd with gain recNoise = 0.5
 % for linux work station 
 temp = load("/home/tianwang/code/behaviorRNN/PsychRNNArchive/stateActivity/gain.mat").temp;
 checker = readtable("/home/tianwang/code/behaviorRNN/PsychRNN/resultData/checkerPmdGain3Additive.csv");
