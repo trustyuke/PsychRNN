@@ -5,16 +5,17 @@ clear all; close all; clc
 % temp2: checkerPmd recNoise = 0
 % gain: checkerPmd with gain recNoise = 0.5
 % for linux work station 
-temp = load("/home/tianwang/code/behaviorRNN/PsychRNNArchive/stateActivity/gain.mat").temp;
-checker = readtable("/home/tianwang/code/behaviorRNN/PsychRNN/resultData/checkerPmdGain3Additive.csv");
+
+% temp = load("/home/tianwang/code/behaviorRNN/PsychRNNArchive/stateActivity/gain.mat").temp;
+% checker = readtable("/home/tianwang/code/behaviorRNN/PsychRNN/resultData/checkerPmdGain3Additive.csv");
 
 % for Tian's PC
 % temp = load("D:\BU\ChandLab\PsychRNNArchive\stateActivity\temp.mat").temp;
 % checker = readtable("D:/BU/chandLab/PsychRNN/resultData/basic2InputNoise0.5.csv");
 
 % for checkerPmd
-% temp = load("D:\BU\ChandLab\PsychRNNArchive\stateActivity\state.mat").state;
-% checker = readtable("D:/BU/chandLab/PsychRNN/resultData/checkerPmdInputNoise0.25recNoise0.5.csv");
+temp = load("D:\BU\ChandLab\PsychRNNArchive\stateActivity\gain.mat").temp;
+checker = readtable("D:/BU/chandLab/PsychRNN/resultData/checkerPmdGain3Additive.csv");
 
 
 [a, b, c] = size(temp);
