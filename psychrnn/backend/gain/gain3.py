@@ -168,10 +168,11 @@ class Gain3(RNN):
             # two choices to implement the gain: 
 
             # 1). add gainRep to state: 
-            activation = self.transfer_function(state + gainRep)
+            # activation = self.transfer_function(state + gainRep)
 
             # 2). multiply gain to firing rate
-            # activation = tf.multiply(self.transfer_function(state), gainRep)
+            activation = tf.multiply(self.transfer_function(state), gainRep)
+            # or
             # activation = self.transfer_function(tf.multiply(state, gainRep))
 
 

@@ -4,7 +4,7 @@ import numpy as np
 """
 Edited from the PsychRNN Perceptual Discrimination Task.
 
-Tian Wang Aug.11th
+Tian Wang Oct 14th, 2021 
 
 Add another input called gain: 
 This is the urgency term multiple with state or firing rate of the RNN later.

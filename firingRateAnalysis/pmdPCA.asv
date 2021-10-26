@@ -116,13 +116,9 @@ for ii  = 1 : length(rt) - 1
     nTrials(ii) = sum(leftSelect)
   
     % left and right average RT of each RT bin
-%     leftAveRT = round(mean(RTR(leftSelect))./10) + 50;
-%     rightAveRT = round(mean(RTR(rightSelect))./10) + 50;
+    leftAveRT = round(mean(RTR(leftSelect))./10) + 50;
+    rightAveRT = round(mean(RTR(rightSelect))./10) + 50;
 
-    leftAveRT = round(min(RTR(leftSelect))./10) + 50;
-    rightAveRT = round(min(RTR(rightSelect))./10) + 50;
-    
-    
     %3D plot
     % plot left trajs
     plot3(leftTrajAve(1,1:leftAveRT), leftTrajAve(2,1:leftAveRT),leftTrajAve(3,1:leftAveRT), 'color', cc(ii,:), 'linestyle', '--', 'linewidth', 2);

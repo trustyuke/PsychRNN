@@ -155,11 +155,11 @@ class Checkerboard2AFC(Task):
         # ----------------------------------
 
         x_t = np.zeros(self.N_in)
-        x_t[2:] = (params["noise"] ** 2) * np.sqrt(self.dt) * np.random.randn(2)
         if t > target_onset:
             x_t[0] = 2 * green_side - 1
             x_t[1] = -(2 * green_side - 1)
         if t > target_onset + checker_onset:
+            x_t[2:] = (params["noise"] ** 2) * np.sqrt(self.dt) * np.random.randn(2)
             x_t[2] += coherence
             x_t[3] -= coherence
 
