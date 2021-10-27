@@ -110,12 +110,12 @@ end
 
 
 %% plot raw ave firing rate for all RT bins
-meanSpike = squeeze(mean(leftTraj, 1));
-cc = jet(size(meanSpike, 1));
+
+cc = jet(size(orthF, 2));
 
 figure()
-for ii = 1 : 5%size(meanSpike, 1)
-    plot(meanSpike(ii,:)', 'color', cc(ii,:));  
+for ii = 1 : size(orthF, 2)
+    plot(squeeze(mean(leftTraj, 1)(1,ii,:)), 'color', cc(ii,:));  
     hold on
 end
 %% reshape data and do pca
