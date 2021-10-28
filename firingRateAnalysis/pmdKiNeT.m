@@ -9,8 +9,8 @@ clear all; close all; clc
 % temp = load("/home/tianwang/code/behaviorRNN/PsychRNNArchive/stateActivity/gainM.mat").temp;
 % checker = readtable("/home/tianwang/code/behaviorRNN/PsychRNN/resultData/checkerPmdGain3Multiply.csv");
 
-temp = load("/home/tianwang/code/behaviorRNN/PsychRNNArchive/stateActivity/gain.mat").temp;
-checker = readtable("/home/tianwang/code/behaviorRNN/PsychRNN/resultData/checkerPmdGain3Additive.csv");
+% temp = load("/home/tianwang/code/behaviorRNN/PsychRNNArchive/stateActivity/gain.mat").temp;
+% checker = readtable("/home/tianwang/code/behaviorRNN/PsychRNN/resultData/checkerPmdGain3Additive.csv");
 
 
 % for Tian's PC
@@ -24,6 +24,8 @@ checker = readtable("/home/tianwang/code/behaviorRNN/PsychRNN/resultData/checker
 % temp = load("D:\BU\ChandLab\PsychRNNArchive\stateActivity\temp.mat").temp;
 % checker = readtable("D:/BU/chandLab/PsychRNN/resultData/checkerPmdInputNoise0.25RecNoise0.5.csv");
 
+temp = load("D:\BU\ChandLab\PsychRNNArchive\stateActivity\gain4M.mat").temp;
+checker = readtable("D:/BU/chandLab/PsychRNN/resultData/checkerPmdGain4Multiply.csv");
 
 [a, b, c] = size(temp);
 

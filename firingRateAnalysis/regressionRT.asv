@@ -9,7 +9,12 @@ clear all; close all; clc
 % temp = load("/home/tianwang/code/behaviorRNN/PsychRNNArchive/stateActivity/gain.mat").temp;
 % checker = readtable("/home/tianwang/code/behaviorRNN/PsychRNN/resultData/checkerPmdGain3Additive.csv");
 
+% temp = load("/home/tianwang/code/behaviorRNN/PsychRNNArchive/stateActivity/gainM.mat").temp;
+% checker = readtable("/home/tianwang/code/behaviorRNN/PsychRNN/resultData/checkerPmdGain3Multiply.csv");
+
 % for Tian's PC
+% temp = load("D:\BU\ChandLab\PsychRNNArchive\stateActivity\temp.mat").temp;
+% checker = readtable("D:/BU/chandLab/PsychRNN/resultData/basic2InputNoise0.5.csv");
 
 % for checkerPmd
 % temp = load("D:\BU\ChandLab\PsychRNNArchive\stateActivity\gain.mat").temp;
@@ -18,10 +23,10 @@ clear all; close all; clc
 temp = load("D:\BU\ChandLab\PsychRNNArchive\stateActivity\gain4M.mat").temp;
 checker = readtable("D:/BU/chandLab/PsychRNN/resultData/checkerPmdGain4Multiply.csv");
 
-% only choose trials with RT < 1000
-rtThresh = checker.decision_time < 1000;
-checker = checker(rtThresh, :);
-temp = temp(:,:,rtThresh);
+% only choose trials having 
+mmm = checker.decision_time < 1000;
+checker = checker(mmm, :);
+temp = temp(:,:,mmm);
 
 [a, b, c] = size(temp);
 

@@ -12,7 +12,7 @@ import numpy as np
 tf.compat.v1.disable_eager_execution()
 
 
-class Gain3(RNN):
+class Gain4(RNN):
     """The basic continuous time recurrent neural network model.
 
     Slightly edited version of the Basic RNN of :class:`psychrnn.backend.models.basic.Basic`
@@ -159,7 +159,8 @@ class Gain3(RNN):
             this_input = tf.where(threshold_mask, threshold_input_mask, rnn_input)
 
             # same rule for gain as input
-            this_gain = tf.where(threshold_mask2, threshold_g_mask, rnn_gain)
+            # this_gain = tf.where(threshold_mask2, threshold_g_mask, rnn_gain)
+            this_gain = rnn_gain
 
             state = self.recurrent_timestep(this_input, state)
             # make gain N_batch * N_rec ()
@@ -168,10 +169,10 @@ class Gain3(RNN):
             # two choices to implement the gain: 
 
             # 1). add gainRep to state: 
-            activation = self.transfer_function(state + gainRep)
+            # activation = self.transfer_function(state + gainRep)
 
             # 2). multiply gain to firing rate
-            # activation = tf.multiply(self.transfer_function(state), gainRep)
+            activation = tf.multiply(self.transfer_function(state), gainRep)
             # or
             # activation = self.transfer_function(tf.multiply(state, gainRep))
 

@@ -4,9 +4,8 @@ clear all; close all; clc
 % temp = load("/home/tianwang/code/behaviorRNN/PsychRNNArchive/stateActivity/temp.mat").temp;
 % checker = readtable("/home/tianwang/code/behaviorRNN/PsychRNN/resultData/basic2InputNoise0.5.csv");
 
-temp = load("/home/tianwang/code/behaviorRNN/PsychRNNArchive/stateActivity/gainM.mat").temp;
-checker = readtable("/home/tianwang/code/behaviorRNN/PsychRNN/resultData/checkerPmdGain3Multiply.csv");
-
+% temp = load("/home/tianwang/code/behaviorRNN/PsychRNNArchive/stateActivity/gainM.mat").temp;
+% checker = readtable("/home/tianwang/code/behaviorRNN/PsychRNN/resultData/checkerPmdGain3Multiply.csv");
 
 
 % for Tian's PC
@@ -16,6 +15,14 @@ checker = readtable("/home/tianwang/code/behaviorRNN/PsychRNN/resultData/checker
 % for checkerPmd
 % temp = load("D:\BU\ChandLab\PsychRNNArchive\stateActivity\gain.mat").temp;
 % checker = readtable("D:/BU/chandLab/PsychRNN/resultData/checkerPmdGain3Additive.csv");
+
+temp = load("D:\BU\ChandLab\PsychRNNArchive\stateActivity\gain4M.mat").temp;
+checker = readtable("D:/BU/chandLab/PsychRNN/resultData/checkerPmdGain4Multiply.csv");
+
+% only choose trials with RT < 1000
+rtThresh = checker.decision_time < 1000;
+checker = checker(rtThresh, :);
+temp = temp(:,:,rtThresh);
 
 [a, b, c] = size(temp);
 
@@ -31,7 +38,7 @@ RTR = round(RT, -1);
 targetOnR = round(targetOn,-1);
 checkerOnR = round(checkerOn + targetOn, -1);
 
-% left trials
+% left & right trials
 right = checker.decision == 1;
 left = checker.decision == 0;
 
@@ -44,6 +51,34 @@ for ii = 1 : c
 end
 
 [a, b, c] = size(alignState);
+
+
+%% align to RT 
+% reaction time; targetOn time and checkerOn time
+RT = checker.decision_time;
+targetOn = checker.target_onset;
+checkerOn = checker.checker_onset;
+
+% real RT, targetOn and checkerOn round to 10's digit
+RTR = round(RT, -1);
+targetOnR = round(targetOn,-1);
+checkerOnR = round(checkerOn + targetOn, -1);
+absoluteRTR = round(targetOn + checkerOn + RT, -1);
+
+% left & right trials
+right = checker.decision == 1;
+left = checker.decision == 0;
+
+% state activity alignes to checkerboard onset, with 500ms before and 2000
+% ms after
+alignState = [];
+for ii = 1 : c
+    zeroPt = absoluteRTR(ii)./10 + 1;
+    alignState(:,:,ii) = temp(:,zeroPt - 75:zeroPt + 50, ii);
+end
+
+[a, b, c] = size(alignState);
+
 
 %% reshape data and do pca
 test = reshape(alignState, [a, b*c])';
@@ -98,6 +133,8 @@ end
 % total data: 500ms before checkerboard onset to 2000ms after checkerboard
 % onset. So max RT that can be plotted is 2000ms
 rt = [100 250:50:700 1200];
+% rt = 100:100:800
+
 cc = jet(length(rt));
 
 % blue to red as RT increases
@@ -116,9 +153,13 @@ for ii  = 1 : length(rt) - 1
     nTrials(ii) = sum(leftSelect)
   
     % left and right average RT of each RT bin
-    leftAveRT = round(mean(RTR(leftSelect))./10) + 50;
-    rightAveRT = round(mean(RTR(rightSelect))./10) + 50;
+%     leftAveRT = round(mean(RTR(leftSelect))./10) + 50;
+%     rightAveRT = round(mean(RTR(rightSelect))./10) + 50;
 
+    leftAveRT = round(min(RTR(leftSelect))./10) + 50;
+    rightAveRT = round(min(RTR(rightSelect))./10) + 50;
+    
+    
     %3D plot
     % plot left trajs
     plot3(leftTrajAve(1,1:leftAveRT), leftTrajAve(2,1:leftAveRT),leftTrajAve(3,1:leftAveRT), 'color', cc(ii,:), 'linestyle', '--', 'linewidth', 2);
