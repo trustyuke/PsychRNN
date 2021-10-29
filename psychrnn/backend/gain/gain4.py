@@ -55,7 +55,7 @@ class Gain4(RNN):
             ((1 - self.alpha) * state)
             + self.alpha
             * (
-                tf.matmul(state, self.get_effective_W_rec(), transpose_b=True, name="1")
+                tf.matmul(self.transfer_function(state), self.get_effective_W_rec(), transpose_b=True, name="1")
                 + tf.matmul(
                     rnn_in, self.get_effective_W_in(), transpose_b=True, name="2"
                 )

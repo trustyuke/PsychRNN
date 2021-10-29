@@ -55,7 +55,7 @@ class Gain3(RNN):
             ((1 - self.alpha) * state)
             + self.alpha
             * (
-                tf.matmul(state, self.get_effective_W_rec(), transpose_b=True, name="1")
+                tf.matmul(self.transfer_function(state), self.get_effective_W_rec(), transpose_b=True, name="1")
                 + tf.matmul(
                     rnn_in, self.get_effective_W_in(), transpose_b=True, name="2"
                 )
@@ -64,8 +64,6 @@ class Gain3(RNN):
             + tf.sqrt(2.0 * self.alpha * self.rec_noise * self.rec_noise)
             * tf.random.normal(tf.shape(input=state), mean=0.0, stddev=1.0)
         )
-
-       # new_state = self.transfer_function(new_state)
 
         return new_state
 

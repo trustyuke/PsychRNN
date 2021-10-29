@@ -18,14 +18,15 @@ clear all; close all; clc
 % checker = readtable("D:/BU/chandLab/PsychRNN/resultData/basic2InputNoise0.5.csv");
 
 % for checkerPmd
-% temp = load("D:\BU\ChandLab\PsychRNNArchive\stateActivity\gain.mat").temp;
+
+temp = load("D:\BU\ChandLab\PsychRNNArchive\stateActivity\temp.mat").temp;
+checker = readtable("D:/BU/chandLab/PsychRNN/resultData/checkerPmdBasic2InputNoise0.75.csv");
+
+% temp = load("D:\BU\ChandLab\PsychRNNArchive\stateActivity\gainA.mat").temp;
 % checker = readtable("D:/BU/chandLab/PsychRNN/resultData/checkerPmdGain3Additive.csv");
 
-% temp = load("D:\BU\ChandLab\PsychRNNArchive\stateActivity\temp.mat").temp;
-% checker = readtable("D:/BU/chandLab/PsychRNN/resultData/checkerPmdInputNoise0.25RecNoise0.5.csv");
-
-temp = load("D:\BU\ChandLab\PsychRNNArchive\stateActivity\gain4M.mat").temp;
-checker = readtable("D:/BU/chandLab/PsychRNN/resultData/checkerPmdGain4Multiply.csv");
+% temp = load("D:\BU\ChandLab\PsychRNNArchive\stateActivity\gainM.mat").temp;
+% checker = readtable("D:/BU/chandLab/PsychRNN/resultData/checkerPmdGain4Multiply.csv");
 
 [a, b, c] = size(temp);
 
@@ -43,7 +44,7 @@ checkerOnR = round(checkerOn + targetOn, -1);
 alignState = [];
 for ii = 1 : c
     zeroPt = checkerOnR(ii)./10 + 1;
-    alignState(:,:,ii) = temp(:,zeroPt - 50:zeroPt + 200, ii);
+    alignState(:,:,ii) = temp(:,zeroPt - 50:zeroPt + 100, ii);
 end
 
 [a, b, c] = size(alignState);
@@ -51,6 +52,7 @@ end
 
 %% directly generated 7 conditions and then do pca
 
+% rt = 100:50:400;
 rt = 100:100:800;
 right = checker.decision == 1;
 left = checker.decision == 0;
@@ -70,9 +72,9 @@ for ii  = 1 : length(rt) - 1
     leftTrajAve = mean(alignState(:,:,leftSelect), 3);
     rightTrajAve = mean(alignState(:,:,rightSelect), 3);
     
-    aveGain0(ii) = mean(checker.g0(leftSelect));
-    aveGainS(ii) = mean(checker.gSlope(leftSelect));
-    
+%     aveGain0(ii) = mean(checker.g0(leftSelect));
+%     aveGainS(ii) = mean(checker.gSlope(leftSelect));
+%     
     leftTraj(:,ii,:) = leftTrajAve;
     rightTraj(:,ii,:) = rightTrajAve;
     
@@ -116,7 +118,7 @@ meanSpike = squeeze(mean(leftTraj, 1));
 cc = jet(size(meanSpike, 1));
 
 figure()
-for ii = 1 : 5%size(meanSpike, 1)
+for ii = 1 : size(meanSpike, 1)
     plot(meanSpike(ii,:)', 'color', cc(ii,:));  
     hold on
 end

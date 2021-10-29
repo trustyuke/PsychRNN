@@ -12,11 +12,15 @@ clear all; close all; clc
 % for Tian's PC
 
 % for checkerPmd
-% temp = load("D:\BU\ChandLab\PsychRNNArchive\stateActivity\gain.mat").temp;
+
+temp = load("D:\BU\ChandLab\PsychRNNArchive\stateActivity\temp.mat").temp;
+checker = readtable("D:/BU/chandLab/PsychRNN/resultData/checkerPmdBasic2InputNoise0.75.csv");
+
+% temp = load("D:\BU\ChandLab\PsychRNNArchive\stateActivity\gainA.mat").temp;
 % checker = readtable("D:/BU/chandLab/PsychRNN/resultData/checkerPmdGain3Additive.csv");
 
-temp = load("D:\BU\ChandLab\PsychRNNArchive\stateActivity\gain4M.mat").temp;
-checker = readtable("D:/BU/chandLab/PsychRNN/resultData/checkerPmdGain4Multiply.csv");
+% temp = load("D:\BU\ChandLab\PsychRNNArchive\stateActivity\gainM.mat").temp;
+% checker = readtable("D:/BU/chandLab/PsychRNN/resultData/checkerPmdGain4Multiply.csv");
 
 % only choose trials with RT < 1000
 rtThresh = checker.decision_time < 1000;
@@ -40,7 +44,7 @@ coh = checker.coherence;
 alignState = [];
 for ii = 1 : c
     zeroPt = checkerOnR(ii)./10 + 1;
-    alignState(:,:,ii) = temp(:,zeroPt - 50:zeroPt + 200, ii);
+    alignState(:,:,ii) = temp(:,zeroPt - 50:zeroPt + 100, ii);
 end
 
 [a, b, c] = size(alignState);
@@ -117,7 +121,7 @@ ypatch = [0 1 1 0];
 p1 = patch(xpatch, ypatch, 'cyan');
 p1.FaceAlpha = 0.2;
 p1.EdgeAlpha = 0;
-xlim([1,250])
+xlim([1,150])
 ylim([-0.02,1])
 
 %%

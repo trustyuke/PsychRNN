@@ -8,11 +8,18 @@ clear all; close all; clc
 % for Tian's PC
 
 % for checkerPmd
-% temp = load("D:\BU\ChandLab\PsychRNNArchive\stateActivity\gain.mat").temp;
+
+
+temp = load("D:\BU\ChandLab\PsychRNNArchive\stateActivity\temp.mat").temp;
+checker = readtable("D:/BU/chandLab/PsychRNN/resultData/checkerPmdBasic2InputNoise0.75.csv");
+
+
+% temp = load("D:\BU\ChandLab\PsychRNNArchive\stateActivity\gainA.mat").temp;
 % checker = readtable("D:/BU/chandLab/PsychRNN/resultData/checkerPmdGain3Additive.csv");
 
-% temp = load("D:\BU\ChandLab\PsychRNNArchive\stateActivity\gain4M.mat").temp;
+% temp = load("D:\BU\ChandLab\PsychRNNArchive\stateActivity\gainM.mat").temp;
 % checker = readtable("D:/BU/chandLab/PsychRNN/resultData/checkerPmdGain4Multiply.csv");
+
 
 % only choose trials with RT < 1000
 rtThresh = checker.decision_time < 1000;
@@ -42,7 +49,7 @@ left = checker.decision == 0;
 alignState = [];
 for ii = 1 : c
     zeroPt = checkerOnR(ii)./10 + 1;
-    alignState(:,:,ii) = temp(:,zeroPt - 50:zeroPt + 200, ii);
+    alignState(:,:,ii) = temp(:,zeroPt - 50:zeroPt + 100, ii);
 end
 
 [a, b, c] = size(alignState);
@@ -66,8 +73,8 @@ for ii  = 1 : ceil(length(coh)/2)
 
     leftSelect = selectedTrials & left;
     rightSelect = selectedTrials & right;
-    leftTrajAve = mean(orthF(2:4,:,leftSelect), 3);
-    rightTrajAve = mean(orthF(2:4,:,rightSelect), 3);
+    leftTrajAve = mean(orthF([1 2 4 ],:,leftSelect), 3);
+    rightTrajAve = mean(orthF([1 2 4 ],:,rightSelect), 3);
       
     % left and right average RT of each RT bin    
     leftAveRT = round(mean(RTR(leftSelect))./10) + 50;
@@ -99,8 +106,10 @@ end
 
 % total data: 500ms before checkerboard onset to 2000ms after checkerboard
 % onset. So max RT that can be plotted is 2000ms
-rt = [100 250:50:700 1200];
-% rt = 100:100:800
+
+% rt = [100 250:50:700 1200];
+rt = 100:100:800
+% rt = 100: 50:400
 
 cc = jet(length(rt));
 
@@ -145,8 +154,6 @@ for ii  = 1 : length(rt) - 1
     plot3(rightTrajAve(1,rightAveRT), rightTrajAve(2,rightAveRT),rightTrajAve(3,rightAveRT), 'color', 'k', 'marker', '.', 'markersize', 25);
 
     title("Left trials: " + sum(leftSelect) + " Right trials: " + sum(rightSelect));
-
-    
     
     iXl = find(leftSelect);
     iXr = find(rightSelect);
