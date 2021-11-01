@@ -14,21 +14,34 @@ clear all; close all; clc
 
 
 % for Tian's PC
-% temp = load("D:\BU\ChandLab\PsychRNNArchive\stateActivity\temp.mat").temp;
-% checker = readtable("D:/BU/chandLab/PsychRNN/resultData/basic2InputNoise0.5.csv");
 
 % for checkerPmd
 
-temp = load("D:\BU\ChandLab\PsychRNNArchive\stateActivity\temp.mat").temp;
-checker = readtable("D:/BU/chandLab/PsychRNN/resultData/checkerPmdBasic2InputNoise0.75.csv");
+% vanilla RNN
+% temp = load("D:\BU\ChandLab\PsychRNNArchive\stateActivity\temp.mat").temp;
+% checker = readtable("D:/BU/chandLab/PsychRNN/resultData/checkerPmdBasic2InputNoise0.75.csv");
 
+% RNN with g0 & gSlope additive
 % temp = load("D:\BU\ChandLab\PsychRNNArchive\stateActivity\gainA.mat").temp;
 % checker = readtable("D:/BU/chandLab/PsychRNN/resultData/checkerPmdGain3Additive.csv");
 
+% RNN with g0 additive
+temp = load("D:\BU\ChandLab\PsychRNNArchive\stateActivity\gainAg0.mat").temp;
+checker = readtable("D:\BU\ChandLab\PsychRNN\resultData\checkerPmdGain3g0.csv");
+
+
+% RNN with multiplicative gain
 % temp = load("D:\BU\ChandLab\PsychRNNArchive\stateActivity\gainM.mat").temp;
 % checker = readtable("D:/BU/chandLab/PsychRNN/resultData/checkerPmdGain4Multiply.csv");
 
+
+% only choose trials with RT < 1000
+rtThresh = checker.decision_time < 700;
+checker = checker(rtThresh, :);
+temp = temp(:,:,rtThresh);
+
 [a, b, c] = size(temp);
+
 
 %% align data to checkerboard onset (target onset)
 
@@ -53,7 +66,7 @@ end
 %% directly generated 7 conditions and then do pca
 
 % rt = 100:50:400;
-rt = 100:100:800;
+rt = 100:50:400;
 right = checker.decision == 1;
 left = checker.decision == 0;
 

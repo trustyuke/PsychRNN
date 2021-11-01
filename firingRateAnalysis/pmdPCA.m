@@ -9,14 +9,20 @@ clear all; close all; clc
 
 % for checkerPmd
 
+% vanilla RNN
+% temp = load("D:\BU\ChandLab\PsychRNNArchive\stateActivity\temp.mat").temp;
+% checker = readtable("D:/BU/chandLab/PsychRNN/resultData/checkerPmdBasic2InputNoise0.75.csv");
 
-temp = load("D:\BU\ChandLab\PsychRNNArchive\stateActivity\temp.mat").temp;
-checker = readtable("D:/BU/chandLab/PsychRNN/resultData/checkerPmdBasic2InputNoise0.75.csv");
-
-
+% RNN with g0 & gSlope additive
 % temp = load("D:\BU\ChandLab\PsychRNNArchive\stateActivity\gainA.mat").temp;
 % checker = readtable("D:/BU/chandLab/PsychRNN/resultData/checkerPmdGain3Additive.csv");
 
+% RNN with g0 additive
+temp = load("D:\BU\ChandLab\PsychRNNArchive\stateActivity\gainAg0.mat").temp;
+checker = readtable("D:\BU\ChandLab\PsychRNN\resultData\checkerPmdGain3g0.csv");
+
+
+% RNN with multiplicative gain
 % temp = load("D:\BU\ChandLab\PsychRNNArchive\stateActivity\gainM.mat").temp;
 % checker = readtable("D:/BU/chandLab/PsychRNN/resultData/checkerPmdGain4Multiply.csv");
 
@@ -108,7 +114,7 @@ end
 % onset. So max RT that can be plotted is 2000ms
 
 % rt = [100 250:50:700 1200];
-rt = 100:100:800
+rt = 100:50:400
 % rt = 100: 50:400
 
 cc = jet(length(rt));

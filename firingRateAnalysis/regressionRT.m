@@ -13,14 +13,23 @@ clear all; close all; clc
 
 % for checkerPmd
 
-temp = load("D:\BU\ChandLab\PsychRNNArchive\stateActivity\temp.mat").temp;
-checker = readtable("D:/BU/chandLab/PsychRNN/resultData/checkerPmdBasic2InputNoise0.75.csv");
+% vanilla RNN
+% temp = load("D:\BU\ChandLab\PsychRNNArchive\stateActivity\temp.mat").temp;
+% checker = readtable("D:/BU/chandLab/PsychRNN/resultData/checkerPmdBasic2InputNoise0.75.csv");
 
+% RNN with g0 & gSlope additive
 % temp = load("D:\BU\ChandLab\PsychRNNArchive\stateActivity\gainA.mat").temp;
 % checker = readtable("D:/BU/chandLab/PsychRNN/resultData/checkerPmdGain3Additive.csv");
 
+% RNN with g0 additive
+temp = load("D:\BU\ChandLab\PsychRNNArchive\stateActivity\gainAg0.mat").temp;
+checker = readtable("D:\BU\ChandLab\PsychRNN\resultData\checkerPmdGain3g0.csv");
+
+
+% RNN with multiplicative gain
 % temp = load("D:\BU\ChandLab\PsychRNNArchive\stateActivity\gainM.mat").temp;
 % checker = readtable("D:/BU/chandLab/PsychRNN/resultData/checkerPmdGain4Multiply.csv");
+
 
 % only choose trials with RT < 1000
 rtThresh = checker.decision_time < 1000;
