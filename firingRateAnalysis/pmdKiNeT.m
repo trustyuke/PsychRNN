@@ -1,21 +1,26 @@
-% the kinet analysis of RNN simulated kinet data
-
 clear all; close all; clc
-% for linux work station 
+% On linux work station (for checkerPmd)
 
-% temp = load("/home/tianwang/code/behaviorRNN/PsychRNNArchive/stateActivity/temp.mat").temp;
-% checker = readtable("/home/tianwang/code/behaviorRNN/PsychRNN/resultData/basic2InputNoise0.5.csv");
+% vanilla RNN
+% temp = load("/net/derived/tianwang/psychRNNArchive/stateActivity/temp.mat").temp;
+% checker = readtable("~/code/behaviorRNN/PsychRNN/resultData/checkerPmdBasic2InputNoise0.75.csv");
 
-% temp = load("/home/tianwang/code/behaviorRNN/PsychRNNArchive/stateActivity/gainM.mat").temp;
-% checker = readtable("/home/tianwang/code/behaviorRNN/PsychRNN/resultData/checkerPmdGain3Multiply.csv");
+% RNN with g0 & gSlope additive
+temp = load("/net/derived/tianwang/psychRNNArchive/stateActivity/gainA.mat").temp;
+checker = readtable("~/code/behaviorRNN/PsychRNN/resultData/checkerPmdGain3Additive.csv");
 
-% temp = load("/home/tianwang/code/behaviorRNN/PsychRNNArchive/stateActivity/gain.mat").temp;
-% checker = readtable("/home/tianwang/code/behaviorRNN/PsychRNN/resultData/checkerPmdGain3Additive.csv");
+% RNN with g0 additive
+% temp = load("/net/derived/tianwang/psychRNNArchive/stateActivity/gainAg0.mat").temp;
+% checker = readtable("~/code/behaviorRNN/PsychRNN/resultData/checkerPmdGain3g0.csv");
 
 
-% for Tian's PC
+% RNN with multiplicative gain
+% temp = load("/net/derived/tianwang/psychRNNArchive/stateActivity/gainM.mat").temp;
+% checker = readtable("~/code/behaviorRNN/PsychRNN/resultData/checkerPmdGain4Multiply.csv");
+% 
 
-% for checkerPmd
+
+% On Tian's PC (for checkerPmd)
 
 % vanilla RNN
 % temp = load("D:\BU\ChandLab\PsychRNNArchive\stateActivity\temp.mat").temp;
@@ -26,9 +31,9 @@ clear all; close all; clc
 % checker = readtable("D:/BU/chandLab/PsychRNN/resultData/checkerPmdGain3Additive.csv");
 
 % RNN with g0 additive
-temp = load("D:\BU\ChandLab\PsychRNNArchive\stateActivity\gainAg0.mat").temp;
-checker = readtable("D:\BU\ChandLab\PsychRNN\resultData\checkerPmdGain3g0.csv");
-
+% temp = load("D:\BU\ChandLab\PsychRNNArchive\stateActivity\gainAg0.mat").temp;
+% checker = readtable("D:\BU\ChandLab\PsychRNN\resultData\checkerPmdGain3g0.csv");
+% 
 
 % RNN with multiplicative gain
 % temp = load("D:\BU\ChandLab\PsychRNNArchive\stateActivity\gainM.mat").temp;
@@ -36,7 +41,9 @@ checker = readtable("D:\BU\ChandLab\PsychRNN\resultData\checkerPmdGain3g0.csv");
 
 
 % only choose trials with RT < 1000
-rtThresh = checker.decision_time < 700;
+sortRT = sort(checker.decision_time);
+disp("95% RT threshold is: " + num2str(sortRT(5000*0.95)))
+rtThresh = checker.decision_time <= sortRT(5000*0.95);
 checker = checker(rtThresh, :);
 temp = temp(:,:,rtThresh);
 
@@ -65,8 +72,10 @@ end
 
 %% directly generated 7 conditions and then do pca
 
-% rt = 100:50:400;
-rt = 100:50:400;
+rt = 100:50:500;
+% rt = 100:50:500;
+% rt =[100:100:800]
+% rt = [100:100:800 1200]
 right = checker.decision == 1;
 left = checker.decision == 0;
 
@@ -79,7 +88,8 @@ aveGain0 = [];
 aveGainS = [];
 for ii  = 1 : length(rt) - 1
     selectedTrials = (rt(ii) < RTR & RTR < rt(ii + 1));
-
+    sum(selectedTrials)
+    
     leftSelect = selectedTrials & left;
     rightSelect = selectedTrials & right;
     leftTrajAve = mean(alignState(:,:,leftSelect), 3);
@@ -115,7 +125,7 @@ end
 
 
 addpath("./KiNeT-master");
-KiNeT(orthF(1:10, :,:),1);
+KiNeT(orthF(1:5, :,1:5:end),1);
 
 cc = jet(size(orthF, 2));
 

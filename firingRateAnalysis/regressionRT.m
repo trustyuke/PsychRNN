@@ -1,17 +1,28 @@
 clear all; close all; clc
+addpath('/net/derived/tianwang/LabCode');
 
-% data:
-% temp: checkerPmd recNoise = 0.5
-% temp2: checkerPmd recNoise = 0
-% gain: checkerPmd with gain recNoise = 0.5
-% for linux work station 
+% On linux work station (for checkerPmd)
 
-% temp = load("/home/tianwang/code/behaviorRNN/PsychRNNArchive/stateActivity/gain.mat").temp;
-% checker = readtable("/home/tianwang/code/behaviorRNN/PsychRNN/resultData/checkerPmdGain3Additive.csv");
+% vanilla RNN
+temp = load("/net/derived/tianwang/psychRNNArchive/stateActivity/temp.mat").temp;
+checker = readtable("~/code/behaviorRNN/PsychRNN/resultData/checkerPmdBasic2InputNoise0.75.csv");
 
-% for Tian's PC
+% RNN with g0 & gSlope additive
+% temp = load("/net/derived/tianwang/psychRNNArchive/stateActivity/gainA.mat").temp;
+% checker = readtable("~/code/behaviorRNN/PsychRNN/resultData/checkerPmdGain3Additive.csv");
 
-% for checkerPmd
+% RNN with g0 additive
+% temp = load("/net/derived/tianwang/psychRNNArchive/stateActivity/gainAg0.mat").temp;
+% checker = readtable("~/code/behaviorRNN/PsychRNN/resultData/checkerPmdGain3g0.csv");
+
+
+% RNN with multiplicative gain
+% temp = load("/net/derived/tianwang/psychRNNArchive/stateActivity/gainM.mat").temp;
+% checker = readtable("~/code/behaviorRNN/PsychRNN/resultData/checkerPmdGain4Multiply.csv");
+
+
+
+% On Tian's PC (for checkerPmd)
 
 % vanilla RNN
 % temp = load("D:\BU\ChandLab\PsychRNNArchive\stateActivity\temp.mat").temp;
@@ -22,9 +33,9 @@ clear all; close all; clc
 % checker = readtable("D:/BU/chandLab/PsychRNN/resultData/checkerPmdGain3Additive.csv");
 
 % RNN with g0 additive
-temp = load("D:\BU\ChandLab\PsychRNNArchive\stateActivity\gainAg0.mat").temp;
-checker = readtable("D:\BU\ChandLab\PsychRNN\resultData\checkerPmdGain3g0.csv");
-
+% temp = load("D:\BU\ChandLab\PsychRNNArchive\stateActivity\gainAg0.mat").temp;
+% checker = readtable("D:\BU\ChandLab\PsychRNN\resultData\checkerPmdGain3g0.csv");
+% 
 
 % RNN with multiplicative gain
 % temp = load("D:\BU\ChandLab\PsychRNNArchive\stateActivity\gainM.mat").temp;
@@ -32,7 +43,9 @@ checker = readtable("D:\BU\ChandLab\PsychRNN\resultData\checkerPmdGain3g0.csv");
 
 
 % only choose trials with RT < 1000
-rtThresh = checker.decision_time < 1000;
+sortRT = sort(checker.decision_time);
+disp("95% RT threshold is: " + num2str(sortRT(5000*0.95)))
+rtThresh = checker.decision_time <= sortRT(5000*0.95);
 checker = checker(rtThresh, :);
 temp = temp(:,:,rtThresh);
 
@@ -115,23 +128,60 @@ bounds(2,:) = prctile(shuffled_r2, 100 - percentile, 1);
 
 toc
 
-%%
+%% plot regression
 
-figure;
-plot(bounds', '--');
-hold on
-plot(r2)
-xlabel('Bin number')
-ylabel('Variance explained')
-title('Choice 1 Variance explained of binned spike counts')
-xline(50, 'color', [0.5 0.5 0.5], 'linestyle', '--')
-xpatch = [0 0 50 50];
-ypatch = [0 1 1 0];
+figure; hold on
+
+t = linspace(-500,1000,151);
+
+ylimit = 0.8;
+xpatch = [-500 -500 0 0];
+ypatch = [ylimit 0 0 ylimit];
 p1 = patch(xpatch, ypatch, 'cyan');
 p1.FaceAlpha = 0.2;
 p1.EdgeAlpha = 0;
-xlim([1,150])
-ylim([-0.02,1])
+
+plot(t, bounds', '--', 'linewidth', 5);
+plot(t, r2, 'linewidth', 5, 'color', [236 112  22]./255)
+plot([0,0], [ylimit,0], 'color', [0.5 0.5 0.5], 'linestyle', '--', 'linewidth',5)
+title('Regression on RT', 'fontsize', 30)
+
+
+% cosmetic code
+hLimits = [-500,1000];
+hTickLocations = -500:300:1000;
+hLabOffset = 0.05;
+hAxisOffset =  -0.011;
+hLabel = "Time: ms"; 
+
+vLimits = [0,ylimit];
+vTickLocations = [0 ylimit/2 ylimit];
+vLabOffset = 150;
+vAxisOffset = -520;
+vLabel = "R^{2}"; 
+
+plotAxis = [1 1];
+
+[hp,vp] = getAxesP(hLimits,...
+    hTickLocations,...
+    hLabOffset,...
+    hAxisOffset,...
+    hLabel,...
+    vLimits,...
+    vTickLocations,...
+    vLabOffset,...
+    vAxisOffset,...
+    vLabel, plotAxis);
+
+set(gcf, 'Color', 'w');
+axis off; 
+axis square;
+axis tight;
+
+
+save('./resultData/boundV.mat', 'bounds');
+save('./resultData/r2V.mat', 'r2');
+print('-painters','-depsc',['./resultFigure/', 'RTV','.eps'], '-r300');
 
 %%
 

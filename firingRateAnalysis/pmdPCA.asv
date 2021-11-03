@@ -1,21 +1,49 @@
 clear all; close all; clc
-% for linux work station 
+% On linux work station (for checkerPmd)
 
-% temp = load("/home/tianwang/code/behaviorRNN/PsychRNNArchive/stateActivity/gainM.mat").temp;
-% checker = readtable("/home/tianwang/code/behaviorRNN/PsychRNN/resultData/checkerPmdGain3Multiply.csv");
+% vanilla RNN
+% temp = load("/net/derived/tianwang/psychRNNArchive/stateActivity/temp.mat").temp;
+% checker = readtable("~/code/behaviorRNN/PsychRNN/resultData/checkerPmdBasic2InputNoise0.75.csv");
+
+% RNN with g0 & gSlope additive
+% temp = load("/net/derived/tianwang/psychRNNArchive/stateActivity/gainA.mat").temp;
+% checker = readtable("~/code/behaviorRNN/PsychRNN/resultData/checkerPmdGain3Additive.csv");
+
+% RNN with g0 additive
+temp = load("/net/derived/tianwang/psychRNNArchive/stateActivity/gainAg0.mat").temp;
+checker = readtable("~/code/behaviorRNN/PsychRNN/resultData/checkerPmdGain3g0.csv");
 
 
-% for Tian's PC
+% RNN with multiplicative gain
+% temp = load("/net/derived/tianwang/psychRNNArchive/stateActivity/gainM.mat").temp;
+% checker = readtable("~/code/behaviorRNN/PsychRNN/resultData/checkerPmdGain4Multiply.csv");
 
-% for checkerPmd
-temp = load("D:\BU\ChandLab\PsychRNNArchive\stateActivity\gainA.mat").temp;
-checker = readtable("D:/BU/chandLab/PsychRNN/resultData/checkerPmdGain3Additive.csv");
 
+
+% On Tian's PC (for checkerPmd)
+
+% vanilla RNN
+% temp = load("D:\BU\ChandLab\PsychRNNArchive\stateActivity\temp.mat").temp;
+% checker = readtable("D:/BU/chandLab/PsychRNN/resultData/checkerPmdBasic2InputNoise0.75.csv");
+
+% RNN with g0 & gSlope additive
+% temp = load("D:\BU\ChandLab\PsychRNNArchive\stateActivity\gainA.mat").temp;
+% checker = readtable("D:/BU/chandLab/PsychRNN/resultData/checkerPmdGain3Additive.csv");
+
+% RNN with g0 additive
+% temp = load("D:\BU\ChandLab\PsychRNNArchive\stateActivity\gainAg0.mat").temp;
+% checker = readtable("D:\BU\ChandLab\PsychRNN\resultData\checkerPmdGain3g0.csv");
+% 
+
+% RNN with multiplicative gain
 % temp = load("D:\BU\ChandLab\PsychRNNArchive\stateActivity\gainM.mat").temp;
 % checker = readtable("D:/BU/chandLab/PsychRNN/resultData/checkerPmdGain4Multiply.csv");
 
+
 % only choose trials with RT < 1000
-rtThresh = checker.decision_time < 400;
+sortRT = sort(checker.decision_time);
+disp("95% RT threshold is: " + num2str(sortRT(5000*0.95)))
+rtThresh = checker.decision_time <= sortRT(5000*0.95);
 checker = checker(rtThresh, :);
 temp = temp(:,:,rtThresh);
 
@@ -37,12 +65,12 @@ checkerOnR = round(checkerOn + targetOn, -1);
 right = checker.decision == 1;
 left = checker.decision == 0;
 
-% state activity alignes to checkerboard onset, with 500ms before and 2000
+% state activity alignes to checkerboard onset, with 500ms before and 1000
 % ms after
 alignState = [];
 for ii = 1 : c
     zeroPt = checkerOnR(ii)./10 + 1;
-    alignState(:,:,ii) = temp(:,zeroPt - 50:zeroPt + 50, ii);
+    alignState(:,:,ii) = temp(:,zeroPt - 50:zeroPt + 100, ii);
 end
 
 [a, b, c] = size(alignState);
@@ -66,8 +94,8 @@ for ii  = 1 : ceil(length(coh)/2)
 
     leftSelect = selectedTrials & left;
     rightSelect = selectedTrials & right;
-    leftTrajAve = mean(orthF(2:4,:,leftSelect), 3);
-    rightTrajAve = mean(orthF(2:4,:,rightSelect), 3);
+    leftTrajAve = mean(orthF([1 2 4 ],:,leftSelect), 3);
+    rightTrajAve = mean(orthF([1 2 4 ],:,rightSelect), 3);
       
     % left and right average RT of each RT bin    
     leftAveRT = round(mean(RTR(leftSelect))./10) + 50;
@@ -101,8 +129,8 @@ end
 % onset. So max RT that can be plotted is 2000ms
 
 % rt = [100 250:50:700 1200];
-% rt = 100:100:800
-rt = 100: 50:400
+rt = 100:50:400
+% rt = 100: 50:400
 
 cc = jet(length(rt));
 
