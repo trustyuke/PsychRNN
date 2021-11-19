@@ -6,8 +6,8 @@ clear all; close all; clc
 % checker = readtable("~/code/behaviorRNN/PsychRNN/resultData/checkerPmdBasic2InputNoise0.75.csv");
 
 % RNN with g0 & gSlope additive
-temp = load("/net/derived/tianwang/psychRNNArchive/stateActivity/gainA.mat").temp;
-checker = readtable("~/code/behaviorRNN/PsychRNN/resultData/checkerPmdGain3Additive.csv");
+% temp = load("/net/derived/tianwang/psychRNNArchive/stateActivity/gainA.mat").temp;
+% checker = readtable("~/code/behaviorRNN/PsychRNN/resultData/checkerPmdGain3Additive.csv");
 
 % RNN with g0 additive
 % temp = load("/net/derived/tianwang/psychRNNArchive/stateActivity/gainAg0.mat").temp;
@@ -33,14 +33,31 @@ checker = readtable("~/code/behaviorRNN/PsychRNN/resultData/checkerPmdGain3Addit
 % RNN with g0 additive
 % temp = load("D:\BU\ChandLab\PsychRNNArchive\stateActivity\gainAg0.mat").temp;
 % checker = readtable("D:\BU\ChandLab\PsychRNN\resultData\checkerPmdGain3g0.csv");
-% 
+
 
 % RNN with multiplicative gain
-% temp = load("D:\BU\ChandLab\PsychRNNArchive\stateActivity\gainM.mat").temp;
-% checker = readtable("D:/BU/chandLab/PsychRNN/resultData/checkerPmdGain4Multiply.csv");
+temp = load("D:\BU\ChandLab\PsychRNNArchive\stateActivity\gainM.mat").temp;
+checker = readtable("D:/BU/chandLab/PsychRNN/resultData/checkerPmdGain4Multiply.csv");
 
+%% get r from x
+% % vanilla
+% temp = max(temp, 0);
 
-% only choose trials with RT < 1000
+% additive
+% for id = 1 : size(temp, 3)
+%     tempGain = checker.g0(id);
+%     temp(:,:,id) = temp(:, :,id) + tempGain;
+% end
+% temp = max(temp, 0);
+
+% multiplicative
+for id = 1 : size(temp, 3)
+    tempGain = checker.g0(id);
+    temp(:,:,id) = temp(:,:,id).*tempGain;
+end
+temp = max(temp, 0);
+
+% only choose trials with 95% RT
 sortRT = sort(checker.decision_time);
 disp("95% RT threshold is: " + num2str(sortRT(5000*0.95)))
 rtThresh = checker.decision_time <= sortRT(5000*0.95);
@@ -50,6 +67,13 @@ temp = temp(:,:,rtThresh);
 [a, b, c] = size(temp);
 
 
+
+%% look at 1 coh bin 
+
+bin1 = (checker.coherence_bin == 0.5 | checker.coherence_bin == -0.5);
+
+checker = checker(bin1, :);
+temp = temp(:,:,bin1);
 %% align data to checkerboard onset (target onset)
 
 RT = checker.decision_time;
@@ -72,9 +96,8 @@ end
 
 %% directly generated 7 conditions and then do pca
 
-rt = 100:50:500;
-% rt = 100:50:500;
-% rt =[100:100:800]
+% rt = 100:50:450;
+rt =[100:100:800]
 % rt = [100:100:800 1200]
 right = checker.decision == 1;
 left = checker.decision == 0;
@@ -95,8 +118,8 @@ for ii  = 1 : length(rt) - 1
     leftTrajAve = mean(alignState(:,:,leftSelect), 3);
     rightTrajAve = mean(alignState(:,:,rightSelect), 3);
     
-%     aveGain0(ii) = mean(checker.g0(leftSelect));
-%     aveGainS(ii) = mean(checker.gSlope(leftSelect));
+    aveGain0(ii) = mean(checker.g0(leftSelect));
+    aveGainS(ii) = mean(checker.gSlope(leftSelect));
 %     
     leftTraj(:,ii,:) = leftTrajAve;
     rightTraj(:,ii,:) = rightTrajAve;
@@ -125,7 +148,7 @@ end
 
 
 addpath("./KiNeT-master");
-KiNeT(orthF(1:5, :,1:5:end),1);
+KiNeT(orthF(1:5, :,:),1);
 
 cc = jet(size(orthF, 2));
 

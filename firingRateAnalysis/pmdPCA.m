@@ -1,5 +1,5 @@
 clear all; close all; clc
-addpath('/net/derived/tianwang/LabCode');
+% addpath('/net/derived/tianwang/LabCode');
 
 % On linux work station (for checkerPmd)
 
@@ -12,8 +12,8 @@ addpath('/net/derived/tianwang/LabCode');
 % checker = readtable("~/code/behaviorRNN/PsychRNN/resultData/checkerPmdGain3Additive.csv");
 
 % RNN with g0 additive
-temp = load("/net/derived/tianwang/psychRNNArchive/stateActivity/gainAg0.mat").temp;
-checker = readtable("~/code/behaviorRNN/PsychRNN/resultData/checkerPmdGain3g0.csv");
+% temp = load("/net/derived/tianwang/psychRNNArchive/stateActivity/gainAg0.mat").temp;
+% checker = readtable("~/code/behaviorRNN/PsychRNN/resultData/checkerPmdGain3g0.csv");
 
 
 % % RNN with multiplicative gain
@@ -35,14 +35,31 @@ checker = readtable("~/code/behaviorRNN/PsychRNN/resultData/checkerPmdGain3g0.cs
 % RNN with g0 additive
 % temp = load("D:\BU\ChandLab\PsychRNNArchive\stateActivity\gainAg0.mat").temp;
 % checker = readtable("D:\BU\ChandLab\PsychRNN\resultData\checkerPmdGain3g0.csv");
-% 
+
 
 % RNN with multiplicative gain
-% temp = load("D:\BU\ChandLab\PsychRNNArchive\stateActivity\gainM.mat").temp;
-% checker = readtable("D:/BU/chandLab/PsychRNN/resultData/checkerPmdGain4Multiply.csv");
+temp = load("D:\BU\ChandLab\PsychRNNArchive\stateActivity\gainM.mat").temp;
+checker = readtable("D:/BU/chandLab/PsychRNN/resultData/checkerPmdGain4Multiply.csv");
 
+%% get r from x
+% % vanilla
+% temp = max(temp, 0);
 
-% only choose trials with RT < 1000
+% % additive
+% for id = 1 : size(temp, 3)
+%     tempGain = checker.g0(id);
+%     temp(:,:,id) = temp(:, :,id) + tempGain;
+% end
+% temp = max(temp, 0);
+
+% multiplicative
+for id = 1 : size(temp, 3)
+    tempGain = checker.g0(id);
+    temp(:,:,id) = temp(:,:,id).*tempGain;
+end
+temp = max(temp, 0);
+
+%% only choose trials with 95% RT
 sortRT = sort(checker.decision_time);
 disp("95% RT threshold is: " + num2str(sortRT(5000*0.95)))
 rtThresh = checker.decision_time <= sortRT(5000*0.95);
@@ -105,8 +122,8 @@ for ii  = 1 : ceil(length(coh)/2)-1
     
     
     % left & right select gains
-    aveGain(1,ii) = mean(checker.g0(leftSelect));
-    aveGain(2,ii) = mean(checker.g0(rightSelect));
+%     aveGain(1,ii) = mean(checker.g0(leftSelect));
+%     aveGain(2,ii) = mean(checker.g0(rightSelect));
     
     % plot left trajs
     plot3(leftTrajAve(1,1:leftAveRT), leftTrajAve(2,1:leftAveRT),leftTrajAve(3,1:leftAveRT), 'color', cc(ii,:), 'linestyle', '--', 'linewidth', 2);
@@ -136,8 +153,8 @@ end
 % onset. So max RT that can be plotted is 2000ms
 
 % rt = [100 250:50:700 1200];
-% rt = 100:100:800;
-rt = 100:50:450
+rt = 100:100:800;
+% rt = 100:50:450
 
 cc = jet(length(rt));
 
@@ -213,35 +230,35 @@ for ii  = length(rt) - 1 : -1 : 1
 % %     pause()
 end
 
-set(gcf, 'Color', 'w');
-axis off; 
-axis square;
-axis tight;
-
-set(gca, 'LooseInset', [ 0 0 0 0 ]);
-xlabel('PC1');
-ylabel('PC2');
-zlabel('PC3');
-title('PCA based on RT', 'fontsize', 30);
-axis vis3d;
-
-% vanilla: view: [170 25]
-% multiplicative: view: [128 -8]
-% additive: view: [120 -18]
-
-view([120,-18])
-tv = ThreeVector(gca);
-tv.axisInset = [0.2 0.2]; % in cm [left bottom]
-tv.vectorLength = 2; % in cm
-tv.textVectorNormalizedPosition = 1.8; 
-tv.fontSize = 15; % font size used for axis labels
-tv.fontColor = 'k'; % font color used for axis labels
-tv.lineWidth = 3; % line width used for axis vectors
-tv.lineColor = 'k'; % line color used for axis vectors
-tv.update();
-rotate3d on;
-
-print('-painters','-depsc',['./resultFigure/', 'PCAA','.eps'], '-r300');
+% set(gcf, 'Color', 'w');
+% axis off; 
+% axis square;
+% axis tight;
+% 
+% set(gca, 'LooseInset', [ 0 0 0 0 ]);
+% xlabel('PC1');
+% ylabel('PC2');
+% zlabel('PC3');
+% title('PCA based on RT', 'fontsize', 30);
+% axis vis3d;
+% 
+% % vanilla: view: [170 25]
+% % multiplicative: view: [128 -8]
+% % additive: view: [120 -18]
+% 
+% view([120,-18])
+% tv = ThreeVector(gca);
+% tv.axisInset = [0.2 0.2]; % in cm [left bottom]
+% tv.vectorLength = 2; % in cm
+% tv.textVectorNormalizedPosition = 1.8; 
+% tv.fontSize = 15; % font size used for axis labels
+% tv.fontColor = 'k'; % font color used for axis labels
+% tv.lineWidth = 3; % line width used for axis vectors
+% tv.lineColor = 'k'; % line color used for axis vectors
+% tv.update();
+% rotate3d on;
+% 
+% print('-painters','-depsc',['./resultFigure/', 'PCAA','.eps'], '-r300');
 
 %%
 
