@@ -12,8 +12,8 @@ clear all; close all; clc
 % checker = readtable("~/code/behaviorRNN/PsychRNN/resultData/checkerPmdGain3Additive.csv");
 
 % RNN with g0 additive
-% temp = load("/net/derived/tianwang/psychRNNArchive/stateActivity/gainAg0.mat").temp;
-% checker = readtable("~/code/behaviorRNN/PsychRNN/resultData/checkerPmdGain3g0.csv");
+temp = load("/net/derived/tianwang/psychRNNArchive/stateActivity/gainAg0.mat").temp;
+checker = readtable("~/code/behaviorRNN/PsychRNN/resultData/checkerPmdGain3g0.csv");
 
 
 % RNN with multiplicative gain
@@ -38,8 +38,8 @@ clear all; close all; clc
 
 
 % RNN with multiplicative gain
-temp = load("D:\BU\ChandLab\PsychRNNArchive\stateActivity\gainM.mat").temp;
-checker = readtable("D:/BU/chandLab/PsychRNN/resultData/checkerPmdGain4Multiply.csv");
+% temp = load("D:\BU\ChandLab\PsychRNNArchive\stateActivity\gainM.mat").temp;
+% checker = readtable("D:/BU/chandLab/PsychRNN/resultData/checkerPmdGain4Multiply.csv");
 
 
 %% get r from x
@@ -47,18 +47,21 @@ checker = readtable("D:/BU/chandLab/PsychRNN/resultData/checkerPmdGain4Multiply.
 % temp = max(temp, 0);
 
 % additive
-% for id = 1 : size(temp, 3)
-%     tempGain = checker.g0(id);
-%     temp(:,:,id) = temp(:, :,id) + tempGain;
-% end
-% temp = max(temp, 0);
-
-% multiplicative
+gainThresh = round(checker.decision_time + checker.target_onset + checker.checker_onset, -1)/10;
 for id = 1 : size(temp, 3)
     tempGain = checker.g0(id);
-    temp(:,:,id) = temp(:,:,id).*tempGain;
+    for idx = 1:gainThresh(id)
+        temp(:,idx,id) = temp(:, idx,id) + tempGain;
+    end
 end
 temp = max(temp, 0);
+
+% multiplicative
+% for id = 1 : size(temp, 3)
+%     tempGain = checker.g0(id);
+%     temp(:,:,id) = temp(:,:,id).*tempGain;
+% end
+% temp = max(temp, 0);
 
 
 % only choose trials with 95% RT
@@ -198,9 +201,9 @@ axis square;
 axis tight;
 
 
-save('./resultData/boundV.mat', 'bounds');
-save('./resultData/r2V.mat', 'r2');
-print('-painters','-depsc',['./resultFigure/', 'RTV','.eps'], '-r300');
+save('./resultData/boundAr.mat', 'bounds');
+save('./resultData/r2Ar.mat', 'r2');
+print('-painters','-depsc',['./resultFigure/', 'RTAr','.eps'], '-r300');
 
 %%
 
