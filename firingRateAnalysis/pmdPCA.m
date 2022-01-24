@@ -36,6 +36,8 @@ checker = readtable("~/code/behaviorRNN/PsychRNN/resultData/checkerPmdGain3g0.cs
 % temp = load("D:\BU\ChandLab\PsychRNNArchive\stateActivity\gainAg0.mat").temp;
 % checker = readtable("D:\BU\ChandLab\PsychRNN\resultData\checkerPmdGain3g0.csv");
 
+temp = load("D:\BU\ChandLab\PsychRNN\temp.mat").temp;
+checker = readtable("D:\BU\ChandLab\PsychRNN\checkerPmdGain3NoPreTrain.csv");
 
 % RNN with multiplicative gain
 % temp = load("D:\BU\ChandLab\PsychRNNArchive\stateActivity\gainM.mat").temp;
@@ -65,7 +67,8 @@ temp = max(temp, 0);
 %% only choose trials with 95% RT
 sortRT = sort(checker.decision_time);
 disp("95% RT threshold is: " + num2str(sortRT(5000*0.95)))
-rtThresh = checker.decision_time <= sortRT(5000*0.95);
+% rtThresh = checker.decision_time <= sortRT(5000*0.95);
+rtThresh = checker.decision_time >= 100;
 checker = checker(rtThresh, :);
 temp = temp(:,:,rtThresh);
 
@@ -159,6 +162,7 @@ end
 % rt = 100:100:800;
 rt = 100:50:450
 
+<<<<<<< HEAD
 cc = [
    0.6091    0.2826    0.7235
 %     0.4279    0.3033    0.6875
@@ -172,6 +176,9 @@ cc = [
 %     0.8863    0.5295    0.1608
     0.8980    0.4155    0.1647
 ]
+=======
+cc = jet(length(rt));
+>>>>>>> a227d4381dc4a0600cdcaf28bf413a18370f9517
 
 % blue to red as RT increases
 % left: -; right: --

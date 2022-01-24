@@ -4,11 +4,16 @@ import numpy as np
 """
 Edited from the PsychRNN Perceptual Discrimination Task.
 
-Tian Wang Oct 14th, 2021 
+Tian Wang Jan 12th, 2022 
 
 Add another input called gain: 
 This is the urgency term multiple with state or firing rate of the RNN later.
 For now, this urgency has a linear form: g = g0 + mt
+
+When generate batch trials, also output 2 more variables:
+weightMaskM: multiply with the W_rec (before checkerboard onset: 0; after checkerboard onset: 1) 
+weightMaskA: add to W_rec (before checkerboard onset: 1; after checkerboard onset: 0)
+
 """
 
 
@@ -207,10 +212,7 @@ class Checkerboard2AFC(Task):
             y_t[abs(correct_side - 1)] = self.lo
 
         mask_t = np.ones(self.N_out)
-
-        ################################### Tian changed this
-        if  (t < target_onset + checker_onset + accumulation_mask):
-        # if (t > target_onset + checker_onset) and (t < target_onset + checker_onset + accumulation_mask):
+        if (t > target_onset + checker_onset) and (t < target_onset + checker_onset + accumulation_mask):
             mask_t = np.zeros(self.N_out)
 
         return x_t, y_t, mask_t, g_t
@@ -250,7 +252,15 @@ class Checkerboard2AFC(Task):
         for t in range(self.N_steps):
             x_data[t, :], y_data[t, :], mask[t, :], g_data[t, :] = self.trial_function(t * self.dt, params, g0, gSlope)
 
-        return x_data, y_data, mask, g_data, gainParams
+        ##################################################### Tian added this: generate weightMaskM and weightMaskA
+        weightMaskA = np.zeros([self.N_steps, 1])
+        weightMaskM = np.zeros([self.N_steps, 1])
+        absCheckerOnset = round((params["target_onset"] + params["checker_onset"])/10)
+        weightMaskA[0:absCheckerOnset] = 1
+        weightMaskM[absCheckerOnset:] = 1
+        #####################################################        
+
+        return x_data, y_data, mask, g_data, gainParams, weightMaskA, weightMaskM
 
 
     def batch_generator(self):
@@ -278,6 +288,8 @@ class Checkerboard2AFC(Task):
             params = []
             g_data = []
             gainParams = []
+            weightMaskA = []
+            weightMaskM = []
             # ----------------------------------
             # Loop over trials in batch
             # ----------------------------------
@@ -286,17 +298,19 @@ class Checkerboard2AFC(Task):
                 # Generate each trial based on its params
                 # ---------------------------------------
                 p = self.generate_trial_params(batch, trial)
-                x,y,m,g,gP = self.generate_trial(p)
+                x,y,m,g,gP,wA,wM = self.generate_trial(p)
                 x_data.append(x)
                 y_data.append(y)
                 mask.append(m)
                 params.append(p)
                 g_data.append(g)
                 gainParams.append(gP)
+                weightMaskA.append(wA)
+                weightMaskM.append(wM)
 
             batch += 1
 
-            yield np.array(x_data), np.array(y_data), np.array(mask), np.array(params), np.array(g_data), np.array(gainParams)
+            yield np.array(x_data), np.array(y_data), np.array(mask), np.array(params), np.array(g_data), np.array(gainParams), np.array(weightMaskA), np.array(weightMaskM)
 
 
 

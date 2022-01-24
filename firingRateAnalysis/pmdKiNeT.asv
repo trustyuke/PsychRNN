@@ -140,9 +140,9 @@ end
 
 %% reshape leftTraj & rightTraj and then do PCA
 
-[a, b, c] = size(leftTraj);
+[a, b, c] = size(rightTraj);
 
-test = reshape(leftTraj, [a, b*c])';
+test = reshape(rightTraj, [a, b*c])';
 
 [coeff, score, latent] = pca(test);
 orthF = [];
@@ -164,7 +164,7 @@ end
 
 
 %% plot raw ave firing rate for all RT bins
-meanSpike = squeeze(mean(leftTraj, 1));
+meanSpike = squeeze(mean(rightTraj, 1));
 cc = jet(size(meanSpike, 1));
 
 figure()
