@@ -1,4 +1,4 @@
-# Tian added this: run a RNN model with gain term
+# Tian added this: run a RNN model with gain term and masks applied on W_rec
 
 from __future__ import division
 from __future__ import print_function
@@ -177,6 +177,8 @@ class RNN(ABC):
         ########################################################
         ## Tian edited this: add a gain as another placeholder
         self.g = tf.compat.v1.placeholder("float", [None, N_steps, 1])       
+        self.weightMaskA = tf.compat.v1.placeholder("float", [None, N_steps, 1])   
+        self.weightMaskM = tf.compat.v1.placeholder("float", [None, N_steps, 1])  
 
         # --------------------------------------------------
         # Initialize variables in proper scope
@@ -322,10 +324,8 @@ class RNN(ABC):
         """
 
         W_in = self.W_in * self.input_connectivity
-
-        ################################# Tian comment out this
-        # if self.dale_ratio:
-        #     W_in = tf.abs(W_in)
+        if self.dale_ratio:
+            W_in = tf.abs(W_in)
         return W_in
 
     def get_effective_W_out(self):
@@ -336,13 +336,8 @@ class RNN(ABC):
         """
 
         W_out = self.W_out * self.output_connectivity
-
-        ################################# Tian comment out this  
         if self.dale_ratio:
-            W_out = tf.matmul(W_out, self.Dale_out, name="in_2")  
-
-        # if self.dale_ratio:
-        #     W_out = tf.matmul(tf.abs(W_out), self.Dale_out, name="in_2")
+            W_out = tf.matmul(tf.abs(W_out), self.Dale_out, name="in_2")
         return W_out
     
     @abstractmethod
@@ -566,13 +561,14 @@ class RNN(ABC):
             # batch_x, batch_y, output_mask, _ = next(trial_batch_generator)
 
             ######################################################## Tian edited this: generate batch of task with gain
-            batch_x, batch_y, output_mask, _, batch_g, _ = next(trial_batch_generator)
+            batch_x, batch_y, output_mask, _, batch_g, _, batch_weightMaskA, batch_weightMaskM = next(trial_batch_generator)
             ########################################################
             
             # self.sess.run(optimize, feed_dict={self.x: batch_x, self.y: batch_y, self.output_mask: output_mask})
             
             ######################################################## Tian edited this: run model
-            self.sess.run(optimize, feed_dict={self.x: batch_x, self.y: batch_y, self.output_mask: output_mask, self.g: batch_g})
+            self.sess.run(optimize, 
+                feed_dict={self.x: batch_x, self.y: batch_y, self.output_mask: output_mask, self.g: batch_g, self.weightMaskA: batch_weightMaskA, self.weightMaskM: batch_weightMaskM})
             ########################################################
 
 
@@ -585,7 +581,7 @@ class RNN(ABC):
 
                 ######################################################## Tian edited this reg loss
                 reg_loss = self.sess.run(self.reg_loss,
-                                feed_dict={self.x: batch_x, self.y: batch_y, self.output_mask: output_mask, self.g: batch_g})  
+                                feed_dict={self.x: batch_x, self.y: batch_y, self.output_mask: output_mask, self.g: batch_g, self.weightMaskA: batch_weightMaskA, self.weightMaskM: batch_weightMaskM})  
                                 
 
                 losses.append(reg_loss)
@@ -692,7 +688,7 @@ class RNN(ABC):
 
         ######################################################## Tian edited this
         outputs, states = self.sess.run([self.predictions, self.states],
-                                        feed_dict={self.x: x, self.g: g})
+                                        feed_dict={self.x: x, self.g: g, self.weightMaskA: weightMaskA, self.weightMaskM: weightMaskM})
         ########################################################
         
         return outputs, states

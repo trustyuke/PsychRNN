@@ -1,8 +1,12 @@
 % the kinet analysis of real pmd data
 clear all; close all; clc
 % for linux work station 
-temp = load("/home/tianwang/code/behaviorRNN/PsychRNNArchive/stateActivity/spikes.mat").trials;
-checker = load("~/Desktop/14October2013_Data.mat").forGPFA.dat;
+% temp = load("/home/tianwang/code/behaviorRNN/PsychRNNArchive/stateActivity/spikes.mat").trials;
+% checker = load("~/Desktop/14October2013_Data.mat").forGPFA.dat;
+% for Tian's PC
+temp = load("C:\Users\tianwang/Downloads/spikes.mat").trials;
+checker = load("C:\Users\tianwang/Downloads/14October2013_Data.mat").forGPFA.dat;;
+
 checker = struct2table(checker);
 RT = checker.RT;
 RTR = round(RT, -1);

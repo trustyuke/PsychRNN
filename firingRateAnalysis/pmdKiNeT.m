@@ -17,7 +17,7 @@ clear all; close all; clc
 % RNN with multiplicative gain
 % temp = load("/net/derived/tianwang/psychRNNArchive/stateActivity/gainM.mat").temp;
 % checker = readtable("~/code/behaviorRNN/PsychRNN/resultData/checkerPmdGain4Multiply.csv");
-% 
+
 
 
 % On Tian's PC (for checkerPmd)
@@ -31,13 +31,15 @@ clear all; close all; clc
 % checker = readtable("D:/BU/chandLab/PsychRNN/resultData/checkerPmdGain3Additive.csv");
 
 % RNN with g0 additive
-% temp = load("D:\BU\ChandLab\PsychRNNArchive\stateActivity\gainAg0.mat").temp;
-% checker = readtable("D:\BU\ChandLab\PsychRNN\resultData\checkerPmdGain3g0.csv");
+% temp = load("D:\BU\ChandLab\PsychRNNArchive\stateActivity\gainA.mat").temp;
+% checker = readtable("D:\BU\ChandLab\PsychRNN\resultData\checkerPmdGain3Additive.csv");
 
+temp = load("D:\BU\ChandLab\PsychRNN\temp.mat").temp;
+checker = readtable("D:\BU\ChandLab\PsychRNN\resultData\gain4Dale0.8.csv");
 
 % RNN with multiplicative gain
-temp = load("D:\BU\ChandLab\PsychRNNArchive\stateActivity\gainM.mat").temp;
-checker = readtable("D:/BU/chandLab/PsychRNN/resultData/checkerPmdGain4Multiply.csv");
+% temp = load("D:\BU\ChandLab\PsychRNNArchive\stateActivity\gainM.mat").temp;
+% checker = readtable("D:/BU/chandLab/PsychRNN/resultData/checkerPmdGain4Multiply.csv");
 
 %% get r from x
 % % vanilla
@@ -51,16 +53,18 @@ checker = readtable("D:/BU/chandLab/PsychRNN/resultData/checkerPmdGain4Multiply.
 % temp = max(temp, 0);
 
 % multiplicative
-for id = 1 : size(temp, 3)
-    tempGain = checker.g0(id);
-    temp(:,:,id) = temp(:,:,id).*tempGain;
-end
-temp = max(temp, 0);
+% for id = 1 : size(temp, 3)
+%     tempGain = checker.g0(id);
+%     temp(:,:,id) = temp(:,:,id).*tempGain;
+% end
+% temp = max(temp, 0);
 
 % only choose trials with 95% RT
 sortRT = sort(checker.decision_time);
-disp("95% RT threshold is: " + num2str(sortRT(5000*0.95)))
-rtThresh = checker.decision_time <= sortRT(5000*0.95);
+disp("95% RT threshold is: " + num2str(sortRT(size(checker,1)*0.95)))
+% rtThresh = checker.decision_time <= sortRT(5000*0.95);
+rtThresh = checker.decision_time >= 100 & checker.decision_time < sortRT(size(checker,1)*0.95);
+
 checker = checker(rtThresh, :);
 temp = temp(:,:,rtThresh);
 
@@ -96,8 +100,8 @@ end
 
 %% directly generated 7 conditions and then do pca
 
-% rt = 100:50:450;
-rt =[100:100:800]
+rt = 100:50:450;
+% rt = linspace(100, 700, 8);
 % rt = [100:100:800 1200]
 right = checker.decision == 1;
 left = checker.decision == 0;
@@ -136,9 +140,9 @@ end
 
 %% reshape leftTraj & rightTraj and then do PCA
 
-[a, b, c] = size(rightTraj);
+[a, b, c] = size(leftTraj);
 
-test = reshape(rightTraj, [a, b*c])';
+test = reshape(leftTraj, [a, b*c])';
 
 [coeff, score, latent] = pca(test);
 orthF = [];
@@ -148,7 +152,7 @@ end
 
 
 addpath("./KiNeT-master");
-KiNeT(orthF(1:5, :,:),1);
+KiNeT(orthF(1:3, :,:),1);
 
 cc = jet(size(orthF, 2));
 
@@ -168,7 +172,25 @@ for ii = 1 : size(meanSpike, 1)
     plot(meanSpike(ii,:)', 'color', cc(ii,:));  
     hold on
 end
-%% reshape data and do pca
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+%% second way to do kinet: just input pca
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%% reshape data and do pca
 test = reshape(alignState, [a, b*c])';
 
 [coeff, score, latent] = pca(test);
@@ -216,4 +238,4 @@ end
 %% KiNeT analysis
 
 addpath("./KiNeT-master");
-KiNeT(leftTraj,1);
+KiNeT(rightTraj,1);
