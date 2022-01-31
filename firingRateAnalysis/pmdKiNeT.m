@@ -35,7 +35,7 @@ clear all; close all; clc
 % checker = readtable("D:\BU\ChandLab\PsychRNN\resultData\checkerPmdGain3Additive.csv");
 
 temp = load("D:\BU\ChandLab\PsychRNN\temp.mat").temp;
-checker = readtable("D:\BU\ChandLab\PsychRNN\resultData\gain4Dale0.8.csv");
+checker = readtable("D:\BU\ChandLab\PsychRNN\resultData\gain3Dale0.8.csv");
 
 % RNN with multiplicative gain
 % temp = load("D:\BU\ChandLab\PsychRNNArchive\stateActivity\gainM.mat").temp;
@@ -99,8 +99,9 @@ end
 
 
 %% directly generated 7 conditions and then do pca
+[a, b, c] = size(alignState);
 
-rt = 100:50:450;
+rt = 200:100:700;
 % rt = linspace(100, 700, 8);
 % rt = [100:100:800 1200]
 right = checker.decision == 1;
@@ -140,9 +141,9 @@ end
 
 %% reshape leftTraj & rightTraj and then do PCA
 
-[a, b, c] = size(leftTraj);
+[a, b, c] = size(rightTraj);
 
-test = reshape(leftTraj, [a, b*c])';
+test = reshape(rightTraj, [a, b*c])';
 
 [coeff, score, latent] = pca(test);
 orthF = [];
@@ -152,7 +153,7 @@ end
 
 
 addpath("./KiNeT-master");
-KiNeT(orthF(1:3, :,:),1);
+KiNeT(orthF(1:5, :,:),1);
 
 cc = jet(size(orthF, 2));
 
