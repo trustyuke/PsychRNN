@@ -3,17 +3,12 @@ addpath('/net/derived/tianwang/LabCode');
 
 % On linux work station (for checkerPmd)
 
-% vanilla RNN
-% temp = load("/net/derived/tianwang/psychRNNArchive/stateActivity/temp.mat").temp;
-% checker = readtable("~/code/behaviorRNN/PsychRNN/resultData/checkerPmdBasic2InputNoise0.75.csv");
-
-% RNN with g0 & gSlope additive
-% temp = load("/net/derived/tianwang/psychRNNArchive/stateActivity/gainA.mat").temp;
-% checker = readtable("~/code/behaviorRNN/PsychRNN/resultData/checkerPmdGain3Additive.csv");
+temp = load("/net/derived/tianwang/psychRNNArchive/stateActivity/gain3_50kTrials_0.mat").temp;
+checker = readtable("/net/derived/tianwang/psychRNNArchive/resultData/gain3_50kTrials_0.csv");
 
 % RNN with g0 additive
-temp = load("/net/derived/tianwang/psychRNNArchive/stateActivity/gainAg0.mat").temp;
-checker = readtable("~/code/behaviorRNN/PsychRNN/resultData/checkerPmdGain3g0.csv");
+% temp = load("/net/derived/tianwang/psychRNNArchive/stateActivity/gainAg0.mat").temp;
+% checker = readtable("~/code/behaviorRNN/PsychRNN/resultData/checkerPmdGain3g0.csv");
 
 
 % % RNN with multiplicative gain
@@ -24,21 +19,14 @@ checker = readtable("~/code/behaviorRNN/PsychRNN/resultData/checkerPmdGain3g0.cs
 
 % On Tian's PC (for checkerPmd)
 
-% vanilla RNN
-% temp = load("D:\BU\ChandLab\PsychRNNArchive\stateActivity\temp.mat").temp;
-% checker = readtable("D:/BU/chandLab/PsychRNN/resultData/checkerPmdBasic2InputNoise0.75.csv");
-
-% RNN with g0 & gSlope additive
-% temp = load("D:\BU\ChandLab\PsychRNNArchive\stateActivity\gainA.mat").temp;
-% checker = readtable("D:/BU/chandLab/PsychRNN/resultData/checkerPmdGain3Additive.csv");
 
 % RNN with g0 additive
 % temp = load("D:\BU\ChandLab\PsychRNNArchive\stateActivity\gainAg0.mat").temp;
 % checker = readtable("D:\BU\ChandLab\PsychRNN\resultData\checkerPmdGain3g0.csv");
 
 
-temp = load("D:\BU\ChandLab\PsychRNN\temp.mat").temp;
-checker = readtable("D:\BU\ChandLab\PsychRNN\resultData\gain3Dale0.8.csv");
+% temp = load("D:\BU\ChandLab\PsychRNN\temp.mat").temp;
+% checker = readtable("D:\BU\ChandLab\PsychRNN\resultData\gain3Dale0.8.csv");
 
 % RNN with multiplicative gain
 % temp = load("D:\BU\ChandLab\PsychRNNArchive\stateActivity\gainM.mat").temp;
@@ -49,14 +37,14 @@ checker = readtable("D:\BU\ChandLab\PsychRNN\resultData\gain3Dale0.8.csv");
 % temp = max(temp, 0);
 
 % additive
-gainThresh = round(checker.decision_time + checker.target_onset + checker.checker_onset, -1)/10;
-for id = 1 : size(temp, 3)
-    tempGain = checker.g0(id);
-    for idx = 1:gainThresh(id)
-        temp(:,idx,id) = temp(:, idx,id) + tempGain;
-    end
-end
-temp = max(temp, 0);
+% gainThresh = round(checker.decision_time + checker.target_onset + checker.checker_onset, -1)/10;
+% for id = 1 : size(temp, 3)
+%     tempGain = checker.g0(id);
+%     for idx = 1:gainThresh(id)
+%         temp(:,idx,id) = temp(:, idx,id) + tempGain;
+%     end
+% end
+% temp = max(temp, 0);
 
 % multiplicative
 % for id = 1 : size(temp, 3)
@@ -69,7 +57,7 @@ temp = max(temp, 0);
 sortRT = sort(checker.decision_time);
 disp("95% RT threshold is: " + num2str(sortRT(5000*0.95)))
 % rtThresh = checker.decision_time <= sortRT(5000*0.95);
-rtThresh = checker.decision_time >= 100;
+rtThresh = checker.decision_time >= 100 & checker.decision_time < sortRT(size(checker,1)*0.95);
 checker = checker(rtThresh, :);
 temp = temp(:,:,rtThresh);
 
@@ -163,23 +151,22 @@ end
 % rt = 100:100:800;
 rt = 100:50:450
 
-<<<<<<< HEAD
-cc = [
-   0.6091    0.2826    0.7235
-%     0.4279    0.3033    0.6875
-    0.2588    0.3136    0.6353
-    0.2510    0.4118    0.6980
-    0.1765    0.6312    0.8588
-%     0.1412    0.7450    0.8863
-    0.3686    0.7490    0.5491
-    0.8941    0.7764    0.1530
-%     0.8980    0.6548    0.1686
-%     0.8863    0.5295    0.1608
-    0.8980    0.4155    0.1647
-]
-=======
+% cc = [
+%    0.6091    0.2826    0.7235
+% %     0.4279    0.3033    0.6875
+%     0.2588    0.3136    0.6353
+%     0.2510    0.4118    0.6980
+%     0.1765    0.6312    0.8588
+% %     0.1412    0.7450    0.8863
+%     0.3686    0.7490    0.5491
+%     0.8941    0.7764    0.1530
+% %     0.8980    0.6548    0.1686
+% %     0.8863    0.5295    0.1608
+%     0.8980    0.4155    0.1647
+% ]
+
+
 cc = jet(length(rt));
->>>>>>> a227d4381dc4a0600cdcaf28bf413a18370f9517
 
 % blue to red as RT increases
 % left: -; right: --
@@ -253,33 +240,33 @@ for ii  = 1:length(rt)-1
 % %     pause()
 end
 
-set(gcf, 'Color', 'w');
-axis off; 
-axis square;
-axis tight;
-
-set(gca, 'LooseInset', [ 0 0 0 0 ]);
-xlabel('PC1');
-ylabel('PC2');
-zlabel('PC3');
-title('PCA based on RT', 'fontsize', 30);
-axis vis3d;
-
-% vanilla: view: [170 25]
-% multiplicative: view: [110 -20]
-% additive: view: [-110 -32]
-
-view([-110,-32])
-tv = ThreeVector(gca);
-tv.axisInset = [0.2 0.2]; % in cm [left bottom]
-tv.vectorLength = 2; % in cm
-tv.textVectorNormalizedPosition = 1.3; 
-tv.fontSize = 15; % font size used for axis labels
-tv.fontColor = 'k'; % font color used for axis labels
-tv.lineWidth = 3; % line width used for axis vectors
-tv.lineColor = 'k'; % line color used for axis vectors
-tv.update();
-rotate3d on;
+% set(gcf, 'Color', 'w');
+% axis off; 
+% axis square;
+% axis tight;
+% 
+% set(gca, 'LooseInset', [ 0 0 0 0 ]);
+% xlabel('PC1');
+% ylabel('PC2');
+% zlabel('PC3');
+% title('PCA based on RT', 'fontsize', 30);
+% axis vis3d;
+% 
+% % vanilla: view: [170 25]
+% % multiplicative: view: [110 -20]
+% % additive: view: [-110 -32]
+% 
+% view([-110,-32])
+% tv = ThreeVector(gca);
+% tv.axisInset = [0.2 0.2]; % in cm [left bottom]
+% tv.vectorLength = 2; % in cm
+% tv.textVectorNormalizedPosition = 1.3; 
+% tv.fontSize = 15; % font size used for axis labels
+% tv.fontColor = 'k'; % font color used for axis labels
+% tv.lineWidth = 3; % line width used for axis vectors
+% tv.lineColor = 'k'; % line color used for axis vectors
+% tv.update();
+% rotate3d on;
 
 % print('-painters','-depsc',['./resultFigure/', 'PCAAr','.eps'], '-r300');
 
