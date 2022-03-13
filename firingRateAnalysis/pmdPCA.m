@@ -25,8 +25,13 @@ checker = readtable("/net/derived/tianwang/psychRNNArchive/resultData/gain3_50kT
 % checker = readtable("D:\BU\ChandLab\PsychRNN\resultData\checkerPmdGain3g0.csv");
 
 
+<<<<<<< Updated upstream
 % temp = load("D:\BU\ChandLab\PsychRNN\temp.mat").temp;
 % checker = readtable("D:\BU\ChandLab\PsychRNN\resultData\gain3Dale0.8.csv");
+=======
+temp = load("D:\BU\ChandLab\PsychRNN\temp.mat").temp;
+checker = readtable("D:\BU\ChandLab\PsychRNN\\gainInput.csv");
+>>>>>>> Stashed changes
 
 % RNN with multiplicative gain
 % temp = load("D:\BU\ChandLab\PsychRNNArchive\stateActivity\gainM.mat").temp;
@@ -79,12 +84,12 @@ checkerOnR = round(checkerOn + targetOn, -1);
 right = checker.decision == 1;
 left = checker.decision == 0;
 
-% state activity alignes to checkerboard onset, with 500ms before and 1000
+% state activity alignes to checkerboard onset, with 500ms before and 2000
 % ms after
 alignState = [];
 for ii = 1 : c
     zeroPt = checkerOnR(ii)./10 + 1;
-    alignState(:,:,ii) = temp(:,zeroPt - 50:zeroPt + 100, ii);
+    alignState(:,:,ii) = temp(:,zeroPt - 50:zeroPt + 200, ii);
 end
 
 [a, b, c] = size(alignState);
@@ -148,8 +153,9 @@ end
 % onset. So max RT that can be plotted is 2000ms
 
 % rt = [100 250:50:700 1200];
-% rt = 100:100:800;
-rt = 100:50:450
+rt = 100:100:800;
+% rt = 100:50:450
+rt = 300:200:1500;
 
 % cc = [
 %    0.6091    0.2826    0.7235

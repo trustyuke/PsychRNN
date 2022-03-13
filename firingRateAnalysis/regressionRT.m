@@ -37,7 +37,7 @@ checker = readtable("~/code/behaviorRNN/PsychRNN/resultData/checkerPmdGain3g0.cs
 % checker = readtable("D:\BU\ChandLab\PsychRNN\resultData\checkerPmdGain3g0.csv");
 
 temp = load("D:\BU\ChandLab\PsychRNN\temp.mat").temp;
-checker = readtable("D:\BU\ChandLab\PsychRNN\checkerPmdGain3NoPreTrain.csv");
+checker = readtable("D:\BU\ChandLab\PsychRNN\\gainInput.csv");
 
 % RNN with multiplicative gain
 % temp = load("D:\BU\ChandLab\PsychRNNArchive\stateActivity\gainM.mat").temp;
@@ -45,6 +45,7 @@ checker = readtable("D:\BU\ChandLab\PsychRNN\checkerPmdGain3NoPreTrain.csv");
 
 
 %% get r from x
+<<<<<<< Updated upstream
 % % vanilla
 % temp = max(temp, 0);
 
@@ -65,6 +66,8 @@ temp = max(temp, 0);
 % end
 % temp = max(temp, 0);
 
+=======
+>>>>>>> Stashed changes
 
 % only choose trials with 95% RT
 sortRT = sort(checker.decision_time);
@@ -87,7 +90,7 @@ checkerOnR = round(checkerOn + targetOn, -1);
 left = checker.decision == 0;
 right = checker.decision == 1;
 coh = checker.coherence;
-% state activity alignes to checkerboard onset, with 500ms before and 2000
+% state activity alignes to checkerboard onset, with 500ms before and 1000
 % ms after
 alignState = [];
 for ii = 1 : c
@@ -120,39 +123,39 @@ for ii = 1 : size(train_x,2)
     r2(ii) = R2;
 end
 
-
-tic
-% shuffled r2 of choice 1    
-shuffled_r2 = zeros(100, size(trials1,2));
-
-for sIdx = 1 : 100
-
-    R = randperm(size(trials1,3));
-    train_x = trials1;
-    temp = RT(left);
-    train_yS = temp(R);
+% 
+% tic
+% % shuffled r2 of choice 1    
+% shuffled_r2 = zeros(100, size(trials1,2));
+% 
+% for sIdx = 1 : 100
+% 
+%     R = randperm(size(trials1,3));
+%     train_x = trials1;
+%     temp = RT(left);
+%     train_yS = temp(R);
+%     
+%     for ii = 1 : size(train_x,2)
+% 
+% %         t1 = [squeeze(train_x(:,ii,:))', coh(left)];
+%         t1 = [squeeze(train_x(:,ii,:))'];
+%         md1 = fitrlinear(t1, train_yS, 'learner', 'leastsquares');
+% 
+%         label = predict(md1, t1);
+%         R = corrcoef(label, train_yS);
+%         R2 = R(1,2).^2;
+%         shuffled_r2(sIdx, ii) = R2;    
+%     end 
+% 
+% end
     
-    for ii = 1 : size(train_x,2)
-
-%         t1 = [squeeze(train_x(:,ii,:))', coh(left)];
-        t1 = [squeeze(train_x(:,ii,:))'];
-        md1 = fitrlinear(t1, train_yS, 'learner', 'leastsquares');
-
-        label = predict(md1, t1);
-        R = corrcoef(label, train_yS);
-        R2 = R(1,2).^2;
-        shuffled_r2(sIdx, ii) = R2;    
-    end 
-
-end
-    
-% calculate bound accuarcy
-bounds = zeros(2, size(trials1,2));
-percentile = 100/size(shuffled_r2,1);
-bounds(1,:) = prctile(shuffled_r2, percentile, 1);
-bounds(2,:) = prctile(shuffled_r2, 100 - percentile, 1);
-
-toc
+% % calculate bound accuarcy
+% bounds = zeros(2, size(trials1,2));
+% percentile = 100/size(shuffled_r2,1);
+% bounds(1,:) = prctile(shuffled_r2, percentile, 1);
+% bounds(2,:) = prctile(shuffled_r2, 100 - percentile, 1);
+% 
+% toc
 
 %% plot regression
 
@@ -167,7 +170,7 @@ p1 = patch(xpatch, ypatch, 'cyan');
 p1.FaceAlpha = 0.2;
 p1.EdgeAlpha = 0;
 
-plot(t, bounds', '--', 'linewidth', 5);
+% plot(t, bounds', '--', 'linewidth', 5);
 plot(t, r2, 'linewidth', 5, 'color', [236 112  22]./255)
 plot([0,0], [ylimit,0], 'color', [0.5 0.5 0.5], 'linestyle', '--', 'linewidth',5)
 title('Regression on RT', 'fontsize', 30)

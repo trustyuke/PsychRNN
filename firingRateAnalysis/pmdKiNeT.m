@@ -34,8 +34,11 @@ clear all; close all; clc
 % temp = load("D:\BU\ChandLab\PsychRNNArchive\stateActivity\gainA.mat").temp;
 % checker = readtable("D:\BU\ChandLab\PsychRNN\resultData\checkerPmdGain3Additive.csv");
 
+% temp = load("D:\BU\ChandLab\PsychRNN\temp.mat").temp;
+% checker = readtable("D:\BU\ChandLab\PsychRNN\resultData\gain3Dale0.8.csv");
+
 temp = load("D:\BU\ChandLab\PsychRNN\temp.mat").temp;
-checker = readtable("D:\BU\ChandLab\PsychRNN\resultData\gain3Dale0.8.csv");
+checker = readtable("D:\BU\ChandLab\PsychRNN\\gainInput.csv");
 
 % RNN with multiplicative gain
 % temp = load("D:\BU\ChandLab\PsychRNNArchive\stateActivity\gainM.mat").temp;
@@ -101,7 +104,10 @@ end
 %% directly generated 7 conditions and then do pca
 [a, b, c] = size(alignState);
 
-rt = 200:100:700;
+% rt = 200:100:700;
+
+rt = 300:200:1500;
+
 % rt = linspace(100, 700, 8);
 % rt = [100:100:800 1200]
 right = checker.decision == 1;
@@ -123,9 +129,10 @@ for ii  = 1 : length(rt) - 1
     leftTrajAve = mean(alignState(:,:,leftSelect), 3);
     rightTrajAve = mean(alignState(:,:,rightSelect), 3);
     
-    aveGain0(ii) = mean(checker.g0(leftSelect));
-    aveGainS(ii) = mean(checker.gSlope(leftSelect));
-%     
+%     aveGain0(ii) = mean(checker.g0(leftSelect));
+%     aveGainS(ii) = mean(checker.gSlope(leftSelect));
+
+
     leftTraj(:,ii,:) = leftTrajAve;
     rightTraj(:,ii,:) = rightTrajAve;
     
