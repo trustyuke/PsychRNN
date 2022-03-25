@@ -139,7 +139,13 @@ class Basic2(Basic):
             rnn_states.append(activation)
             rnn_inputs_edit.append(this_input)
 
-            check_threshold = tf.greater(output, self.decision_threshold)
+            # check_threshold = tf.greater(output, self.decision_threshold)
+
+            ################################# Tian edited this
+            check_threshold = tf.greater(tf.math.abs(output), self.decision_threshold) 
+            #################################
+
+
             threshold_trial_mask_vector = tf.expand_dims(
                 tf.reduce_any(check_threshold, axis=1), axis=1
             )

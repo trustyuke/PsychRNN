@@ -1,5 +1,6 @@
 import tensorflow as tf
 
+
 def rt_mask_mse_06(predictions, y, output_mask):
     
     # find decision period
@@ -42,6 +43,11 @@ def rt_mask_mse_07(predictions, y, output_mask):
 
     # find predictions greater than threshold
     above_thresh = tf.greater(predictions, 0.7)
+
+    ########################### Tian edited this 
+    above_thresh = tf.greater(tf.math.abs(predictions), 0.7)
+    ###########################
+
     above_thresh_vec = tf.reduce_any(above_thresh, axis=2)
     above_thresh_cum = tf.cumsum(tf.cast(above_thresh_vec, dtype=tf.float32), axis=1)
     above_thresh_cont = tf.expand_dims(tf.greater_equal(above_thresh_cum, 1), axis=2)
