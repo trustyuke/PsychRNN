@@ -53,6 +53,7 @@ class Checkerboard2AFC(Task):
         target_onset=[250, 500],
         checker_onset=[500, 1000],
         accumulation_mask=300,
+        wait = [0,0.4],
     ):
 
         super().__init__(2, 2, dt, tau, T, N_batch)
@@ -64,7 +65,7 @@ class Checkerboard2AFC(Task):
         self.decision_threshold = 0.7
         self.post_decision_baseline = 0.2
 
-        self.wait = [0,0.3]
+        self.wait = wait
         self.hi = 1
         self.lo = 0
 
@@ -174,12 +175,20 @@ class Checkerboard2AFC(Task):
         init_y_left = init_y[0]
         init_y_right = init_y[1]
         y_t[0] = init_y_left
-        y_t[1] = init_y_right
+        # make initial bias for left and right same
+        y_t[1] = init_y_left
+        # initial bais for left and right different
+        # y_t[1] = init_y_right
 
         # add a initial bias term
         if t > target_onset + checker_onset:
             y_t[correct_side] = self.hi
-            y_t[abs(correct_side - 1)] = self.lo
+            # y_t[abs(correct_side - 1)] = self.lo
+
+
+            ######################## Tian added this: make lower bound as initial bias
+            y_t[abs(correct_side - 1)] = init_y_left
+
 
         mask_t = np.ones(self.N_out)
         if (t > target_onset + checker_onset) and (t < target_onset + checker_onset + accumulation_mask):

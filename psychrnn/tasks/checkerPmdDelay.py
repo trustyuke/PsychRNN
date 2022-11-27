@@ -105,6 +105,7 @@ class Checkerboard2AFC(Task):
         params["target_onset"] = np.random.randint(self.target_onset[0], self.target_onset[1])
         params["checker_onset"] = np.random.randint(self.checker_onset[0], self.checker_onset[1])
 
+        #################################### Tian added this
         ##################### random delay:
         # params["delay"] = np.random.randint(self.delay_range[0], self.delay_range[1])
         ##################### delay correlated to coherence:

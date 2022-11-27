@@ -12,8 +12,8 @@ clear all; close all; clc
 % checker = readtable("~/code/behaviorRNN/PsychRNN/resultData/checkerPmdGain3Additive.csv");
 
 % RNN with g0 additive
-temp = load("/net/derived/tianwang/psychRNNArchive/stateActivity/gainAg0.mat").temp;
-checker = readtable("~/code/behaviorRNN/PsychRNN/resultData/checkerPmdGain3g0.csv");
+% temp = load("/net/derived/tianwang/psychRNNArchive/stateActivity/gainAg0.mat").temp;
+% checker = readtable("~/code/behaviorRNN/PsychRNN/resultData/checkerPmdGain3g0.csv");
 
 
 % RNN with multiplicative gain
@@ -36,40 +36,19 @@ checker = readtable("~/code/behaviorRNN/PsychRNN/resultData/checkerPmdGain3g0.cs
 % temp = load("D:\BU\ChandLab\PsychRNNArchive\stateActivity\gainAg0.mat").temp;
 % checker = readtable("D:\BU\ChandLab\PsychRNN\resultData\checkerPmdGain3g0.csv");
 
-temp = load("D:\BU\ChandLab\PsychRNN\temp.mat").temp;
-checker = readtable("D:\BU\ChandLab\PsychRNN\\gainInput.csv");
-
 % RNN with multiplicative gain
 % temp = load("D:\BU\ChandLab\PsychRNNArchive\stateActivity\gainM.mat").temp;
 % checker = readtable("D:/BU/chandLab/PsychRNN/resultData/checkerPmdGain4Multiply.csv");
 
+% initial bias
+temp = load("D:\BU\ChandLab\PsychRNNArchive\stateActivity\init.mat").temp;
+checker = readtable("D:/BU/chandLab/PsychRNN/resultData/checkerPmdInit.csv");
 
-%% get r from x
-<<<<<<< Updated upstream
-% % vanilla
-% temp = max(temp, 0);
+% delay
+% temp = load("D:\BU\ChandLab\PsychRNNArchive\stateActivity\delay.mat").temp;
+% checker = readtable("D:/BU/chandLab/PsychRNN/resultData/checkerPmdDelay.csv");
 
-% additive
-gainThresh = round(checker.decision_time + checker.target_onset + checker.checker_onset, -1)/10;
-for id = 1 : size(temp, 3)
-    tempGain = checker.g0(id);
-    for idx = 1:gainThresh(id)
-        temp(:,idx,id) = temp(:, idx,id) + tempGain;
-    end
-end
-temp = max(temp, 0);
-
-% multiplicative
-% for id = 1 : size(temp, 3)
-%     tempGain = checker.g0(id);
-%     temp(:,:,id) = temp(:,:,id).*tempGain;
-% end
-% temp = max(temp, 0);
-
-=======
->>>>>>> Stashed changes
-
-% only choose trials with 95% RT
+%% only choose trials with 95% RT
 sortRT = sort(checker.decision_time);
 disp("95% RT threshold is: " + num2str(sortRT(5000*0.95)))
 % rtThresh = checker.decision_time <= sortRT(5000*0.95);
@@ -90,18 +69,21 @@ checkerOnR = round(checkerOn + targetOn, -1);
 left = checker.decision == 0;
 right = checker.decision == 1;
 coh = checker.coherence;
-% state activity alignes to checkerboard onset, with 500ms before and 1000
+
+% state activity alignes to checkerboard onset, with 200ms before and 800
 % ms after
+before = 200;
+after = 800;
+
 alignState = [];
 for ii = 1 : c
     zeroPt = checkerOnR(ii)./10 + 1;
-    alignState(:,:,ii) = temp(:,zeroPt - 50:zeroPt + 100, ii);
+    alignState(:,:,ii) = temp(:,zeroPt - before/10+1:zeroPt + after/10, ii);
 end
 
 [a, b, c] = size(alignState);
 
 %%
-
 trials1 = alignState(:,:,left);
 trials2 = alignState(:,:,right);
 
@@ -148,7 +130,7 @@ end
 %     end 
 % 
 % end
-    
+%     
 % % calculate bound accuarcy
 % bounds = zeros(2, size(trials1,2));
 % percentile = 100/size(shuffled_r2,1);
@@ -161,10 +143,10 @@ end
 
 figure; hold on
 
-t = linspace(-500,1000,151);
+t = linspace(-before/10, after/10, length(r2));
 
 ylimit = 0.8;
-xpatch = [-500 -500 0 0];
+xpatch = [-before/10 -before/10 0 0];
 ypatch = [ylimit 0 0 ylimit];
 p1 = patch(xpatch, ypatch, 'cyan');
 p1.FaceAlpha = 0.2;
@@ -175,42 +157,42 @@ plot(t, r2, 'linewidth', 5, 'color', [236 112  22]./255)
 plot([0,0], [ylimit,0], 'color', [0.5 0.5 0.5], 'linestyle', '--', 'linewidth',5)
 title('Regression on RT', 'fontsize', 30)
 
-
-% cosmetic code
-hLimits = [-500,1000];
-hTickLocations = -500:300:1000;
-hLabOffset = 0.05;
-hAxisOffset =  -0.011;
-hLabel = "Time: ms"; 
-
-vLimits = [0,ylimit];
-vTickLocations = [0 ylimit/2 ylimit];
-vLabOffset = 150;
-vAxisOffset = -520;
-vLabel = "R^{2}"; 
-
-plotAxis = [1 1];
-
-[hp,vp] = getAxesP(hLimits,...
-    hTickLocations,...
-    hLabOffset,...
-    hAxisOffset,...
-    hLabel,...
-    vLimits,...
-    vTickLocations,...
-    vLabOffset,...
-    vAxisOffset,...
-    vLabel, plotAxis);
-
-set(gcf, 'Color', 'w');
-axis off; 
-axis square;
-axis tight;
-
-
-save('./resultData/boundAr.mat', 'bounds');
-save('./resultData/r2Ar.mat', 'r2');
-print('-painters','-depsc',['./resultFigure/', 'RTAr','.eps'], '-r300');
+% 
+% % cosmetic code
+% hLimits = [-500,1000];
+% hTickLocations = -500:300:1000;
+% hLabOffset = 0.05;
+% hAxisOffset =  -0.011;
+% hLabel = "Time: ms"; 
+% 
+% vLimits = [0,ylimit];
+% vTickLocations = [0 ylimit/2 ylimit];
+% vLabOffset = 150;
+% vAxisOffset = -520;
+% vLabel = "R^{2}"; 
+% 
+% plotAxis = [1 1];
+% 
+% [hp,vp] = getAxesP(hLimits,...
+%     hTickLocations,...
+%     hLabOffset,...
+%     hAxisOffset,...
+%     hLabel,...
+%     vLimits,...
+%     vTickLocations,...
+%     vLabOffset,...
+%     vAxisOffset,...
+%     vLabel, plotAxis);
+% 
+% set(gcf, 'Color', 'w');
+% axis off; 
+% axis square;
+% axis tight;
+% 
+% 
+% save('./resultData/boundAr.mat', 'bounds');
+% save('./resultData/r2Ar.mat', 'r2');
+% print('-painters','-depsc',['./resultFigure/', 'RTAr','.eps'], '-r300');
 
 %%
 

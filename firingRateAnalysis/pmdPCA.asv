@@ -1,4 +1,3 @@
-% aligned to checkerboard
 clear all; close all; clc
 
 % On linux work station (for checkerPmd)
@@ -31,13 +30,9 @@ clear all; close all; clc
 % temp = load("D:\BU\ChandLab\PsychRNNArchive\stateActivity\gainM.mat").temp;
 % checker = readtable("D:/BU/chandLab/PsychRNN/resultData/checkerPmdGain4Multiply.csv");
 
-% initial bias
+
 temp = load("D:\BU\ChandLab\PsychRNNArchive\stateActivity\init.mat").temp;
 checker = readtable("D:/BU/chandLab/PsychRNN/resultData/checkerPmdInit.csv");
-
-% delay
-% temp = load("D:\BU\ChandLab\PsychRNNArchive\stateActivity\delay.mat").temp;
-% checker = readtable("D:/BU/chandLab/PsychRNN/resultData/checkerPmdDelay.csv");
 
 %% get r from x
 % % vanilla
@@ -86,7 +81,7 @@ checkerOnR = round(checkerOn + targetOn, -1);
 right = checker.decision == 1;
 left = checker.decision == 0;
 
-% state activity alignes to checkerboard onset, with 200ms before and 800
+% state activity alignes to checkerboard onset, with 200ms before and 1000
 % ms after
 before = 200;
 after = 800;
@@ -118,8 +113,8 @@ for ii  = 1 : ceil(length(coh)/2)-1
 
     leftSelect = selectedTrials & left;
     rightSelect = selectedTrials & right;
-    leftTrajAve = mean(orthF([1 2 3],:,leftSelect), 3);
-    rightTrajAve = mean(orthF([1 2 3],:,rightSelect), 3);
+    leftTrajAve = mean(orthF([1 2 3 ],:,leftSelect), 3);
+    rightTrajAve = mean(orthF([1 2 3 ],:,rightSelect), 3);
       
     % left and right average RT of each RT bin    
     leftAveRT = round(mean(RTR(leftSelect))./10) + before/10;
@@ -152,14 +147,14 @@ end
 %% based on RT
 
 % the trials definitely have more trials with fastere RT, so the long RT
-% trajs are messy
+% trajs are messay
 
 % total data: 500ms before checkerboard onset to 2000ms after checkerboard
 % onset. So max RT that can be plotted is 2000ms
 
 % rt = [100 250:50:700 1200];
-% rt = 100:100:800;
-rt = 100:100:700;
+rt = 100:100:800;
+rt = 300:200:1000;
 
 % cc = [
 %    0.6091    0.2826    0.7235
@@ -220,14 +215,34 @@ for ii  = 1:length(rt)-1
 
     title("Left trials: " + sum(leftSelect) + " Right trials: " + sum(rightSelect));
     
-%     iXl = find(leftSelect);
-%     iXr = find(rightSelect);
-%     Nl = randi(length(iXl),1,max(length(iXl),80));
-%     Nr = randi(length(iXr),1,max(length(iXr),80));
-%     
-%     distV(ii,:) = (sum(abs(nanmean(abs(orthF(1:10,:,iXl(Nl))),3)-nanmean(abs(orthF(1:10,:,iXr(Nr))),3))));
+    iXl = find(leftSelect);
+    iXr = find(rightSelect);
+    Nl = randi(length(iXl),1,max(length(iXl),80));
+    Nr = randi(length(iXr),1,max(length(iXr),80));
+    
+    distV(ii,:) = (sum(abs(nanmean(abs(orthF(1:10,:,iXl(Nl))),3)-nanmean(abs(orthF(1:10,:,iXr(Nr))),3))));
 
     
+%     % 2D plot
+%     % plot left trajs
+%     plot(leftTrajAve(1,1:leftAveRT), leftTrajAve(2,1:leftAveRT), 'color', cc(ii,:), 'linestyle', '--', 'linewidth', 2);
+%     hold on
+%     % mark the checkerboard onset
+%     plot(leftTrajAve(1,50), leftTrajAve(2,50), 'color', cc(ii,:), 'marker', 'd', 'markerfacecolor',cc(ii,:),'markersize', 10);
+%     % mark the RT (end time)
+%     plot(leftTrajAve(1,leftAveRT), leftTrajAve(2,leftAveRT), 'color', 'k', 'marker', '.', 'markersize', 25);
+%     
+%     % plot right trajs
+%     plot(rightTrajAve(1,1:rightAveRT), rightTrajAve(2,1:rightAveRT), 'color', cc(ii,:), 'linewidth', 2);
+%     hold on
+%     % mark the checkerboard onset
+%     plot(rightTrajAve(1,50), rightTrajAve(2,50), 'color', cc(ii,:), 'marker', 'd', 'markerfacecolor',cc(ii,:), 'markersize', 10);
+%     % mark the RT (end time)
+%     plot(rightTrajAve(1,rightAveRT), rightTrajAve(2,rightAveRT), 'color', 'k', 'marker', '.', 'markersize', 25);
+%     
+%     title("Left trials: " + sum(leftSelect) + " Right trials: " + sum(rightSelect));
+    
+% %     pause()
 end
 
 % set(gcf, 'Color', 'w');

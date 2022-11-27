@@ -550,9 +550,8 @@ class RNN(ABC):
             performance = performance_cutoff - 1
 
         while epoch * batch_size < training_iters and (performance_cutoff is None or performance < performance_cutoff):
-            # batch_x, batch_y, output_mask, _ = next(trial_batch_generator)
-            ##################################### Tian edited this
-            batch_x, batch_y, output_mask, _,_,_ = next(trial_batch_generator)
+            batch_x, batch_y, output_mask, _ = next(trial_batch_generator)
+
 
             self.sess.run(optimize, feed_dict={self.x: batch_x, self.y: batch_y, self.output_mask: output_mask})
             # --------------------------------------------------
