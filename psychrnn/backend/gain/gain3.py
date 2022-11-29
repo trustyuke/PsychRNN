@@ -37,7 +37,7 @@ class Gain3(RNN):
 
 
 
-    def recurrent_timestep(self, rnn_in, state):
+    def recurrent_timestep(self, rnn_in, state, gainRep):
         """Recurrent time step.
 
         Given input and previous state, outputs the next state of the network.
@@ -55,7 +55,7 @@ class Gain3(RNN):
             ((1 - self.alpha) * state)
             + self.alpha
             * (
-                tf.matmul(self.transfer_function(state), self.get_effective_W_rec(), transpose_b=True, name="1")
+                tf.matmul(self.transfer_function(state+gainRep), self.get_effective_W_rec(), transpose_b=True, name="1")
                 + tf.matmul(
                     rnn_in, self.get_effective_W_in(), transpose_b=True, name="2"
                 )
@@ -159,9 +159,10 @@ class Gain3(RNN):
             # same rule for gain as input
             this_gain = tf.where(threshold_mask2, threshold_g_mask, rnn_gain)
 
-            state = self.recurrent_timestep(this_input, state)
             # make gain N_batch * N_rec ()
             gainRep = tf.tile(this_gain, [1, self.N_rec])
+
+            state = self.recurrent_timestep(this_input, state, gainRep)
 
             # two choices to implement the gain: 
 

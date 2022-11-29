@@ -9,8 +9,11 @@ clear all; close all; clc
 % checker = readtable("/net/derived/tianwang/psychRNNArchive/resultData/gain3_50kTrials_0.csv");
 
 % RNN with g0 additive
-% temp = load("/net/derived/tianwang/psychRNNArchive/stateActivity/gainAg0.mat").temp;
-% checker = readtable("~/code/behaviorRNN/PsychRNN/resultData/checkerPmdGain3g0.csv");
+temp = load("/net/derived/tianwang/psychRNNArchive/stateActivity/gain3.mat").temp;
+checker = readtable("~/Downloads/PsychRNN/checkerPmdGain3Additive.csv");
+
+% temp = load("/net/derived/tianwang/psychRNNArchive/stateActivity/gainA.mat").temp;
+% checker = readtable("~/code/behaviorRNN/PsychRNN/resultData/checkerPmdGain3Additive.csv");
 
 
 % % RNN with multiplicative gain
@@ -18,6 +21,13 @@ clear all; close all; clc
 % checker = readtable("~/code/behaviorRNN/PsychRNN/resultData/checkerPmdGain4Multiply.csv");
 % 
 
+% initial bias
+% temp = load("/net/derived/tianwang/psychRNNArchive/stateActivity/init.mat").temp;
+% checker = readtable("~/code/behaviorRNN/PsychRNN/resultData/checkerPmdInit.csv");
+
+% delay
+% temp = load("/net/derived/tianwang/psychRNNArchive/stateActivity/delay.mat").temp;
+% checker = readtable("~/code/behaviorRNN/PsychRNN/resultData/checkerPmdDelay.csv");
 
 % On Tian's PC (for checkerPmd)
 
@@ -32,8 +42,8 @@ clear all; close all; clc
 % checker = readtable("D:/BU/chandLab/PsychRNN/resultData/checkerPmdGain4Multiply.csv");
 
 % initial bias
-temp = load("D:\BU\ChandLab\PsychRNNArchive\stateActivity\init.mat").temp;
-checker = readtable("D:/BU/chandLab/PsychRNN/resultData/checkerPmdInit.csv");
+% temp = load("D:\BU\ChandLab\PsychRNNArchive\stateActivity\init.mat").temp;
+% checker = readtable("D:/BU/chandLab/PsychRNN/resultData/checkerPmdInit.csv");
 
 % delay
 % temp = load("D:\BU\ChandLab\PsychRNNArchive\stateActivity\delay.mat").temp;
@@ -88,8 +98,8 @@ left = checker.decision == 0;
 
 % state activity alignes to checkerboard onset, with 200ms before and 800
 % ms after
-before = 200;
-after = 800;
+before = 100;
+after = 1200;
 
 alignState = [];
 for ii = 1 : c
@@ -157,10 +167,10 @@ end
 % total data: 500ms before checkerboard onset to 2000ms after checkerboard
 % onset. So max RT that can be plotted is 2000ms
 
-% rt = [100 250:50:700 1200];
+rt = [100 250:50:700 1200];
 % rt = 100:100:800;
-rt = 100:100:700;
-
+% rt = 200:100:1200;
+rt = [100 175 250:50:500 1200];
 % cc = [
 %    0.6091    0.2826    0.7235
 % %     0.4279    0.3033    0.6875
@@ -260,6 +270,7 @@ end
 
 % print('-painters','-depsc',['./resultFigure/', 'PCAAr','.eps'], '-r300');
 
+% axis equal
 %%
 
 for condId = 1:size(distV,1)

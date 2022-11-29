@@ -207,9 +207,6 @@ class Checkerboard2AFC(Task):
             y_t[abs(correct_side - 1)] = self.lo
 
         mask_t = np.ones(self.N_out)
-
-        ################################### Tian changed this
-        # if  (t < target_onset + checker_onset + accumulation_mask):
         if (t > target_onset + checker_onset) and (t < target_onset + checker_onset + accumulation_mask):
             mask_t = np.zeros(self.N_out)
 

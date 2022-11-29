@@ -13,6 +13,8 @@ clear all; close all; clc
 % temp = load("/net/derived/tianwang/psychRNNArchive/stateActivity/gainAg0.mat").temp;
 % checker = readtable("~/code/behaviorRNN/PsychRNN/resultData/checkerPmdGain3g0.csv");
 
+temp = load("/net/derived/tianwang/psychRNNArchive/stateActivity/gain3.mat").temp;
+checker = readtable("~/Downloads/PsychRNN/checkerPmdGain3Additive.csv");
 
 % RNN with multiplicative gain
 % temp = load("/net/derived/tianwang/psychRNNArchive/stateActivity/gainM.mat").temp;
@@ -37,8 +39,8 @@ clear all; close all; clc
 % temp = load("D:\BU\ChandLab\PsychRNN\temp.mat").temp;
 % checker = readtable("D:\BU\ChandLab\PsychRNN\resultData\gain3Dale0.8.csv");
 
-temp = load("D:\BU\ChandLab\PsychRNN\temp.mat").temp;
-checker = readtable("D:\BU\ChandLab\PsychRNN\\gainInput.csv");
+% temp = load("D:\BU\ChandLab\PsychRNN\temp.mat").temp;
+% checker = readtable("D:\BU\ChandLab\PsychRNN\\gainInput.csv");
 
 % RNN with multiplicative gain
 % temp = load("D:\BU\ChandLab\PsychRNNArchive\stateActivity\gainM.mat").temp;
@@ -90,12 +92,15 @@ RTR = round(RT, -1);
 targetOnR = round(targetOn,-1);
 checkerOnR = round(checkerOn + targetOn, -1);
 
-% state activity alignes to checkerboard onset, with 500ms before and 2000
+% state activity alignes to checkerboard onset, with 200ms before and 800
 % ms after
+before = 100;
+after = 1200;
+
 alignState = [];
 for ii = 1 : c
     zeroPt = checkerOnR(ii)./10 + 1;
-    alignState(:,:,ii) = temp(:,zeroPt - 50:zeroPt + 100, ii);
+    alignState(:,:,ii) = temp(:,zeroPt - before/10+1:zeroPt + after/10, ii);
 end
 
 [a, b, c] = size(alignState);
@@ -106,7 +111,8 @@ end
 
 % rt = 200:100:700;
 
-rt = 300:200:1500;
+% rt = 300:200:1500;
+rt = [100 250:50:500 1200];
 
 % rt = linspace(100, 700, 8);
 % rt = [100:100:800 1200]

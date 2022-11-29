@@ -20,7 +20,10 @@ clear all; close all; clc
 % temp = load("/net/derived/tianwang/psychRNNArchive/stateActivity/gainM.mat").temp;
 % checker = readtable("~/code/behaviorRNN/PsychRNN/resultData/checkerPmdGain4Multiply.csv");
 
-
+% initial bias
+% temp = load("/net/derived/tianwang/psychRNNArchive/stateActivity/init.mat").temp;
+% checker = readtable("~/code/behaviorRNN/PsychRNN/resultData/checkerPmdInit.csv");
+% 
 
 % On Tian's PC (for checkerPmd)
 
@@ -41,8 +44,8 @@ clear all; close all; clc
 % checker = readtable("D:/BU/chandLab/PsychRNN/resultData/checkerPmdGain4Multiply.csv");
 
 % initial bias
-temp = load("D:\BU\ChandLab\PsychRNNArchive\stateActivity\init.mat").temp;
-checker = readtable("D:/BU/chandLab/PsychRNN/resultData/checkerPmdInit.csv");
+% temp = load("D:\BU\ChandLab\PsychRNNArchive\stateActivity\init.mat").temp;
+% checker = readtable("D:/BU/chandLab/PsychRNN/resultData/checkerPmdInit.csv");
 
 % delay
 % temp = load("D:\BU\ChandLab\PsychRNNArchive\stateActivity\delay.mat").temp;
@@ -153,6 +156,7 @@ p1.FaceAlpha = 0.2;
 p1.EdgeAlpha = 0;
 
 % plot(t, bounds', '--', 'linewidth', 5);
+refline([0, 0.05])
 plot(t, r2, 'linewidth', 5, 'color', [236 112  22]./255)
 plot([0,0], [ylimit,0], 'color', [0.5 0.5 0.5], 'linestyle', '--', 'linewidth',5)
 title('Regression on RT', 'fontsize', 30)

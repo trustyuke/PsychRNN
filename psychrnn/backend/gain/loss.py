@@ -53,12 +53,6 @@ def rt_mask_mse_07(predictions, y, output_mask):
     for i in range(output_mask.shape[2]-1):
         decision_mask = tf.concat((decision_mask, decision_mask_vec), axis=2)
     
-    ###################################### Tian changed this 
-    # baseline_y_mat = tf.fill(tf.shape(decision_mask), 0.2)
-    # y_reshape = tf.reshape(y, tf.shape(decision_mask))
-    ######################################################
-
-    
     # adjust output matrix
     baseline_y_mat = tf.fill(decision_mask.shape, 0.2)
     y_reshape = tf.reshape(y, decision_mask.shape)
