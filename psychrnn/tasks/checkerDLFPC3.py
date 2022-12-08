@@ -62,9 +62,9 @@ class Checkerboard2AFC(Task):
     ):
 
 
-        ################################################### Tian added this: 2 inputs in network
+        ################################################### Tian added this: 3 inputs in network
 
-        super().__init__(2, 1, dt, tau, T, N_batch)
+        super().__init__(3, 1, dt, tau, T, N_batch)
         self.coherence = coherence
         self.side = side
         self.noise = noise
