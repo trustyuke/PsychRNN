@@ -107,7 +107,7 @@ class Checkerboard2AFC(Task):
             if len(self.coherence) == 1
             else np.random.uniform(self.coherence[0], self.coherence[1])
         )
-        params["side"] = np.sign(np.random.random()-0.5)
+        params["side"] = int(np.random.random() < self.side)
         params["noise"] = self.noise
         params["accumulation_mask"] = self.accumulation_mask
         params["target_onset"] = np.random.randint(self.target_onset[0], self.target_onset[1])
@@ -168,7 +168,7 @@ class Checkerboard2AFC(Task):
             x_t[0] = 2 * green_side - 1
             x_t[1] = -(2 * green_side - 1)
         if t > target_onset + checker_onset:
-            x_t[2] = (params["noise"] ** 2) * np.sqrt(self.dt) * np.random.randn(1)
+            x_t[2:] = (params["noise"] ** 2) * np.sqrt(self.dt) * np.random.randn(1)
             x_t[2] += coherence
 
         # ----------------------------------
