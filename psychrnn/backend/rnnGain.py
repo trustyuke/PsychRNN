@@ -322,10 +322,8 @@ class RNN(ABC):
         """
 
         W_in = self.W_in * self.input_connectivity
-
-        ################################# Tian comment out this
-        # if self.dale_ratio:
-        #     W_in = tf.abs(W_in)
+        if self.dale_ratio:
+            W_in = tf.abs(W_in)
         return W_in
 
     def get_effective_W_out(self):
@@ -336,13 +334,8 @@ class RNN(ABC):
         """
 
         W_out = self.W_out * self.output_connectivity
-
-        ################################# Tian comment out this  
         if self.dale_ratio:
-            W_out = tf.matmul(W_out, self.Dale_out, name="in_2")  
-
-        # if self.dale_ratio:
-        #     W_out = tf.matmul(tf.abs(W_out), self.Dale_out, name="in_2")
+            W_out = tf.matmul(tf.abs(W_out), self.Dale_out, name="in_2")
         return W_out
     
     @abstractmethod
