@@ -23,6 +23,10 @@ class Checkerboard2AFC(Task):
         1: completely red
         -1: completely green
 
+    output 1: side chosen
+        1: choose right
+        -1: choose left
+
     The network must determine i) which color has greater coherence and ii) which side that color is on.
         The network outputs two decision variables with one hot encoding (high=1, low=0.2)
         towards the target side representing greater color coherence.

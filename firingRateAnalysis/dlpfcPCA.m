@@ -1,8 +1,10 @@
 clear all; close all; clc
 
+temp = load("~/code/behaviorRNN/PsychRNN/temp.mat").temp;
+checker = readtable("~/code/behaviorRNN/PsychRNN/checkerDLPFCTest.csv");
 
-temp = load("D:\BU\ChandLab\DLPFCRNN\PsychRNN\temp.mat").temp;
-checker = readtable("D:\BU\ChandLab\DLPFCRNN\PsychRNN\checkerDLPFCTest.csv");
+% temp = load("D:\BU\ChandLab\DLPFCRNN\PsychRNN\temp.mat").temp;
+% checker = readtable("D:\BU\ChandLab\DLPFCRNN\PsychRNN\checkerDLPFCTest.csv");
 
 %% only choose trials with 95% RT
 sortRT = sort(checker.decision_time);
